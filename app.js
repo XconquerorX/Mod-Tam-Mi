@@ -1,4 +1,122 @@
-const STORAGE_KEY = "thai_mod_hub_state_v1";
+const STORAGE_KEY = "thai_mod_hub_state_v2";
+const API_BASE_URL = "";
+
+const I18N = {
+  th: {
+    login: "เข้าสู่ระบบ",
+    recover: "กู้คืนบัญชี",
+    requestMod: "ขอมอดแปลไทยเกมต่อไป",
+    donate: "โดเนท",
+    openForum: "เปิดหน้ากระทู้",
+    adminRole: "ผู้ดูแลระบบ (Admin)",
+    uploadPerm: "สิทธิ์ลงมอด",
+    siteSubtitle: "รวมมอดเกมแปลไทย อ่านง่าย ใช้งานสะดวก ดาวน์โหลดฟรี",
+    guestProfile: "โปรไฟล์ผู้เยี่ยมชม",
+    guestHint: "ล็อกอินเพื่อรับ UserID สะสมคะแนน/EXP ปลดล็อกยศ และของตกแต่ง",
+    points: "คะแนน",
+    customizeProfile: "แต่งโปรไฟล์",
+    cmsPanelBtn: "แผงแอดมิน (CMS)",
+    normalMod: "มอดเกมปกติ",
+    adultMod: "มอดเกม 18+",
+    notifications: "แจ้งเตือน",
+    adminAlerts: "แจ้งเตือนแอดมิน",
+    localMode: "โหมด LocalStorage",
+    backendConnected: "เชื่อมต่อ Backend แล้ว",
+    exportData: "Export ข้อมูล",
+    reportBug: "แจ้งบัค",
+    publicNotifTitle: "กล่องแจ้งเตือนสำหรับทุกคน",
+    adminNotifTitle: "กล่องแจ้งเตือนผู้ดูแลระบบ (VIP ขอมอด & แจ้งโดเนท)",
+    sendNotif: "ส่งแจ้งเตือน",
+    clearRead: "ล้างที่อ่านแล้ว",
+    addNewMod: "เพิ่ม / ลงมอดแปลไทยใหม่",
+    modName: "ชื่อมอด / ชื่อเกม",
+    category: "หมวดหมู่",
+    contentRating: "โหมดเนื้อหา",
+    modDesc: "รายละเอียดมอด",
+    downloadUrl: "ลิงก์ดาวน์โหลด",
+    imageUrl: "ลิงก์รูปภาพมอด (URL)",
+    uploadImage: "หรืออัปโหลดรูปภาพจากเครื่อง",
+    saveMod: "บันทึกมอด",
+    addCosmetic: "เพิ่มของตกแต่ง (แยกปลดล็อกด้วยคะแนน vs EXP)",
+    type: "ประเภท",
+    addCosmeticBtn: "เพิ่มของตกแต่ง",
+    topExpRank: "Rank ผู้ใช้ที่ EXP สูงสุด",
+    membersOnly: "เฉพาะสมาชิก",
+    rankTiers: "ทำเนียบยศ 7 ระดับ",
+    eventsAndCosmetics: "กิจกรรม & ของตกแต่ง",
+    cosmeticHint: "ปลดล็อกของตกแต่งได้ทั้งจาก คะแนน และ EXP แยกเงื่อนไขกันชัดเจน",
+    loginTitle: "เข้าสู่ระบบสมาชิก",
+    recoverTitle: "กู้คืนบัญชีผู้ใช้",
+    requestListTitle: "รายชื่อเกมที่ขอแปลไทย (แยกปกติ / 18+)",
+    donateTitle: "โดเนทสนับสนุน & ส่งหลักฐาน",
+    backHome: "← กลับหน้าหลักมอด",
+    forumTitle: "กระดานพูดคุย & สอบถาม",
+    forumSub: "แยกหน้าพูดคุยสอบถาม วิธีลงมอด และแลกเปลี่ยนข้อมูลสมาชิก",
+    allThreads: "รายการกระทู้ทั้งหมด",
+    threadHint: "ตั้งกระทู้ใหม่หรือพิมพ์ตอบกลับได้ทันที",
+    newThread: "+ ตั้งกระทู้ใหม่",
+    threadTopic: "หัวข้อกระทู้",
+    threadDetail: "รายละเอียด",
+    postThread: "โพสต์กระทู้"
+  },
+  en: {
+    login: "Login",
+    recover: "Recover Account",
+    requestMod: "Request Thai Mod",
+    donate: "Donate",
+    openForum: "Open Forum",
+    adminRole: "Administrator",
+    uploadPerm: "Mod Uploader",
+    siteSubtitle: "Thai Game Translation Mod Hub — Easy to read, convenient, free download",
+    guestProfile: "Guest Profile",
+    guestHint: "Login to get a UserID, earn Points/EXP, and unlock ranks & cosmetics",
+    points: "Points",
+    customizeProfile: "Customize Profile",
+    cmsPanelBtn: "Admin Panel (CMS)",
+    normalMod: "Normal Mods",
+    adultMod: "18+ Mods",
+    notifications: "Notifications",
+    adminAlerts: "Admin Alerts",
+    localMode: "LocalStorage Mode",
+    backendConnected: "Backend Connected",
+    exportData: "Export Data",
+    reportBug: "Report Bug",
+    publicNotifTitle: "Public Notifications (Everyone)",
+    adminNotifTitle: "Admin Alerts (VIP Mod Requests & Donations)",
+    sendNotif: "Send Alert",
+    clearRead: "Clear All",
+    addNewMod: "Add / Publish New Thai Mod",
+    modName: "Mod / Game Title",
+    category: "Category",
+    contentRating: "Content Rating",
+    modDesc: "Mod Description",
+    downloadUrl: "Download URL",
+    imageUrl: "Mod Image URL",
+    uploadImage: "Or Upload Image from Device",
+    saveMod: "Save Mod",
+    addCosmetic: "Add Cosmetic (Separate Points vs EXP Unlock)",
+    type: "Type",
+    addCosmeticBtn: "Add Cosmetic",
+    topExpRank: "Top EXP User Ranking",
+    membersOnly: "Members Only",
+    rankTiers: "7 Rank Tiers",
+    eventsAndCosmetics: "Events & Cosmetics",
+    cosmeticHint: "Unlock cosmetics separately with Points or EXP",
+    loginTitle: "Member Login",
+    recoverTitle: "Account Recovery",
+    requestListTitle: "Requested Thai Translation Games (Normal / 18+)",
+    donateTitle: "Donate & Submit Proof",
+    backHome: "← Back to Mod Hub",
+    forumTitle: "Discussion & Q&A Forum",
+    forumSub: "Dedicated board for mod installation help and community chat",
+    allThreads: "All Forum Threads",
+    threadHint: "Create a new thread or reply anytime",
+    newThread: "+ New Thread",
+    threadTopic: "Thread Title",
+    threadDetail: "Details",
+    postThread: "Post Thread"
+  }
+};
 
 const RANK_LEVELS = [
   { minExp: 0, name: "ระดับ 1: มือใหม่หัดลงมอด" },
@@ -17,12 +135,14 @@ const DEFAULT_AVATAR =
   );
 
 const DEFAULT_STATE = {
+  lang: "th",
   settings: {
     siteTitle: "Thai Mod Hub",
     siteSubtitle: "รวมมอดเกมแปลไทย อ่านง่าย ใช้งานสะดวก ดาวน์โหลดฟรี",
-    announcement: "ยินดีต้อนรับสู่ Thai Mod Hub — สลับโหมดมอดปกติ/18+ กู้คืนบัญชีได้ และเปิดหน้ากระทู้แยกได้"
+    announcement: "ยินดีต้อนรับสู่ Thai Mod Hub — รองรับสลับภาษา TH/EN โดเนทรับ VIP และดูรายชื่อเกมที่ขอแปลได้"
   },
   contentMode: "normal",
+  requestTabMode: "normal",
   currentUserId: null,
   users: [
     {
@@ -30,8 +150,15 @@ const DEFAULT_STATE = {
       username: "admin",
       password: "123",
       role: "admin",
+      isVip: true,
+      canUploadMod: true,
       provider: "local",
-      socialKey: null,
+      socialIds: {
+        google: "google-admin-001",
+        facebook: "fb-admin-001",
+        discord: "100000000000000001",
+        twitter: "@admin_modhub"
+      },
       points: 999,
       exp: 2600,
       avatarSrc: DEFAULT_AVATAR,
@@ -46,16 +173,23 @@ const DEFAULT_STATE = {
       username: "player1",
       password: "123",
       role: "member",
+      isVip: true,
+      canUploadMod: true,
       provider: "local",
-      socialKey: null,
+      socialIds: {
+        google: "google-player1-001",
+        facebook: "",
+        discord: "100000000000000002",
+        twitter: ""
+      },
       points: 120,
       exp: 350,
       avatarSrc: DEFAULT_AVATAR,
       frameId: "frame-none",
-      titleLabel: "นักผจญภัยหน้าใหม่",
+      titleLabel: "ผู้สนับสนุน VIP",
       unlockedAvatars: [DEFAULT_AVATAR],
       unlockedFrames: ["frame-none"],
-      unlockedTitles: ["นักผจญภัยหน้าใหม่"]
+      unlockedTitles: ["นักผจญภัยหน้าใหม่", "ผู้สนับสนุน VIP"]
     }
   ],
   cosmetics: [
@@ -96,7 +230,27 @@ const DEFAULT_STATE = {
       downloads: 0
     }
   ],
-  requests: [],
+  requests: [
+    {
+      id: "req-demo-1",
+      game: "Baldur's Gate 3 (อัปเดตแพตช์ล่าสุด)",
+      rating: "normal",
+      note: "อยากให้ช่วยแปลส่วนเควสเสริมเพิ่มเติมครับ",
+      by: "player1 (u-member1)",
+      isVipRequest: true,
+      votes: 3,
+      createdAt: new Date().toLocaleString("th-TH")
+    }
+  ],
+  donations: [],
+  publicNotifications: [
+    {
+      id: "pn-1",
+      text: "เปิดระบบขอเกมแปลไทยแบบสาธารณะแล้ว สามารถกดเข้าไปดูรายชื่อและโหวตเกมที่อยากให้แปลได้เลย!",
+      createdAt: new Date().toLocaleString("th-TH")
+    }
+  ],
+  adminNotifications: [],
   bugReports: [],
   threads: [
     {
@@ -112,6 +266,9 @@ const DEFAULT_STATE = {
 };
 
 let uploadedModImageDataUrl = "";
+let uploadedDonateSlipDataUrl = "";
+let backendOnline = false;
+let selectedSocialProvider = null;
 
 function normalizeUser(u) {
   return {
@@ -119,8 +276,15 @@ function normalizeUser(u) {
     username: u.username,
     password: u.password || "",
     role: u.role || "member",
+    isVip: Boolean(u.isVip),
+    canUploadMod: Boolean(u.canUploadMod),
     provider: u.provider || "local",
-    socialKey: u.socialKey || null,
+    socialIds: {
+      google: u.socialIds?.google || "",
+      facebook: u.socialIds?.facebook || "",
+      discord: u.socialIds?.discord || "",
+      twitter: u.socialIds?.twitter || ""
+    },
     points: Number(u.points || 0),
     exp: Number(u.exp || 0),
     avatarSrc: u.avatarSrc || DEFAULT_AVATAR,
@@ -138,13 +302,18 @@ function loadState() {
     if (!raw) return structuredClone(DEFAULT_STATE);
     const parsed = JSON.parse(raw);
     return {
+      lang: parsed.lang === "en" ? "en" : "th",
       settings: { ...DEFAULT_STATE.settings, ...(parsed.settings || {}) },
       contentMode: parsed.contentMode === "18+" ? "18+" : "normal",
+      requestTabMode: parsed.requestTabMode === "18+" ? "18+" : "normal",
       currentUserId: parsed.currentUserId || null,
       users: Array.isArray(parsed.users) && parsed.users.length ? parsed.users.map(normalizeUser) : structuredClone(DEFAULT_STATE.users),
       cosmetics: Array.isArray(parsed.cosmetics) ? parsed.cosmetics : structuredClone(DEFAULT_STATE.cosmetics),
       mods: Array.isArray(parsed.mods) ? parsed.mods : structuredClone(DEFAULT_STATE.mods),
-      requests: Array.isArray(parsed.requests) ? parsed.requests : [],
+      requests: Array.isArray(parsed.requests) ? parsed.requests : structuredClone(DEFAULT_STATE.requests),
+      donations: Array.isArray(parsed.donations) ? parsed.donations : [],
+      publicNotifications: Array.isArray(parsed.publicNotifications) ? parsed.publicNotifications : structuredClone(DEFAULT_STATE.publicNotifications),
+      adminNotifications: Array.isArray(parsed.adminNotifications) ? parsed.adminNotifications : [],
       bugReports: Array.isArray(parsed.bugReports) ? parsed.bugReports : [],
       threads: Array.isArray(parsed.threads) ? parsed.threads : structuredClone(DEFAULT_STATE.threads)
     };
@@ -155,12 +324,71 @@ function loadState() {
 
 let state = loadState();
 
-function saveState() {
+function applyLanguage() {
+  const dict = I18N[state.lang] || I18N.th;
+  document.documentElement.lang = state.lang;
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const key = el.getAttribute("data-i18n");
+    if (dict[key]) el.textContent = dict[key];
+  });
+  const langBtn = document.getElementById("langToggleBtn");
+  if (langBtn) langBtn.textContent = state.lang === "th" ? "EN / ไทย" : "ไทย / EN";
+  const statusBadge = document.getElementById("backendStatusBadge");
+  if (statusBadge) {
+    statusBadge.textContent = backendOnline ? dict.backendConnected : dict.localMode;
+  }
+}
+
+async function syncStateToBackend() {
+  if (!backendOnline) return;
+  try {
+    await fetch(`${API_BASE_URL}/api/state`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(state)
+    });
+  } catch {
+    backendOnline = false;
+  }
+}
+
+async function checkBackendConnection() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/health`);
+    if (!res.ok) return;
+    backendOnline = true;
+    applyLanguage();
+    const remoteStateRes = await fetch(`${API_BASE_URL}/api/state`);
+    if (remoteStateRes.ok) {
+      const remote = await remoteStateRes.json();
+      if (Array.isArray(remote.users) && remote.users.length) {
+        state.users = remote.users.map(normalizeUser);
+      }
+      if (Array.isArray(remote.donations)) state.donations = remote.donations;
+      if (Array.isArray(remote.adminNotifications)) state.adminNotifications = remote.adminNotifications;
+      if (Array.isArray(remote.publicNotifications) && remote.publicNotifications.length) {
+        state.publicNotifications = remote.publicNotifications;
+      }
+      saveState(false);
+      renderAll();
+    }
+  } catch {
+    backendOnline = false;
+  }
+}
+
+function saveState(shouldSync = true) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  if (shouldSync) syncStateToBackend();
 }
 
 function getCurrentUser() {
   return state.users.find((u) => u.id === state.currentUserId) || null;
+}
+
+function canUserUploadMod(user) {
+  if (!user) return false;
+  return user.role === "admin" || Boolean(user.canUploadMod);
 }
 
 function getRankByExp(exp) {
@@ -176,11 +404,8 @@ function canUnlockCosmetic(item, user) {
   const reqExp = Number(item.unlockExp || 0);
   const userPoints = Number(user?.points || 0);
   const userExp = Number(user?.exp || 0);
-
   if (reqPoints === 0 && reqExp === 0) return true;
-  const passPoints = reqPoints > 0 && userPoints >= reqPoints;
-  const passExp = reqExp > 0 && userExp >= reqExp;
-  return passPoints || passExp;
+  return (reqPoints > 0 && userPoints >= reqPoints) || (reqExp > 0 && userExp >= reqExp);
 }
 
 function formatUnlockRequirement(item) {
@@ -190,6 +415,15 @@ function formatUnlockRequirement(item) {
   if (reqPoints > 0) parts.push(`คะแนน ${reqPoints} แต้ม`);
   if (reqExp > 0) parts.push(`EXP ${reqExp}`);
   return parts.length ? `ปลดล็อกด้วย: ${parts.join(" หรือ ")}` : "ปลดล็อกฟรี";
+}
+
+function pushAdminAlert(type, message) {
+  state.adminNotifications.unshift({
+    id: "adm-notif-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
+    type,
+    message,
+    createdAt: new Date().toLocaleString("th-TH")
+  });
 }
 
 function renderThreads() {
@@ -220,59 +454,6 @@ function renderThreads() {
     .join("");
 }
 
-function bindForumEvents() {
-  const toggleBtn = document.getElementById("toggleNewThreadBtn");
-  const newForm = document.getElementById("newThreadForm");
-  const listEl = document.getElementById("threadList");
-
-  toggleBtn?.addEventListener("click", () => {
-    newForm?.classList.toggle("hidden");
-  });
-
-  newForm?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const title = document.getElementById("threadTitleInput")?.value.trim();
-    const body = document.getElementById("threadBodyInput")?.value.trim();
-    if (!title || !body) return;
-    const user = getCurrentUser();
-
-    state.threads.unshift({
-      id: "th-" + Date.now(),
-      title,
-      body,
-      author: user ? user.username : "สมาชิก",
-      authorId: user ? user.id : "guest",
-      createdAt: new Date().toLocaleString("th-TH"),
-      replies: []
-    });
-    saveState();
-    newForm.reset();
-    newForm.classList.add("hidden");
-    renderThreads();
-  });
-
-  listEl?.addEventListener("submit", (e) => {
-    const form = e.target.closest(".reply-form");
-    if (!form) return;
-    e.preventDefault();
-    const input = form.querySelector(".reply-input");
-    const text = input?.value.trim();
-    if (!text) return;
-    const user = getCurrentUser();
-    const thread = state.threads.find((t) => t.id === form.dataset.threadId);
-    if (!thread) return;
-
-    thread.replies.push({
-      id: "rp-" + Date.now(),
-      author: user ? user.username : "สมาชิก",
-      text,
-      createdAt: new Date().toLocaleString("th-TH")
-    });
-    saveState();
-    renderThreads();
-  });
-}
-
 function initForumPage() {
   const badge = document.getElementById("forumUserBadge");
   const user = getCurrentUser();
@@ -281,14 +462,99 @@ function initForumPage() {
       ? `ผู้ใช้: <strong>${user.username}</strong> <span class="userid-badge">ID: ${user.id}</span>`
       : `กำลังใช้งานในฐานะผู้เยี่ยมชม · <a href="index.html">ไปหน้าล็อกอิน</a>`;
   }
-  bindForumEvents();
+  document.getElementById("langToggleBtn")?.addEventListener("click", () => {
+    state.lang = state.lang === "th" ? "en" : "th";
+    saveState(false);
+    applyLanguage();
+  });
+  document.getElementById("toggleNewThreadBtn")?.addEventListener("click", () => {
+    document.getElementById("newThreadForm")?.classList.toggle("hidden");
+  });
+  document.getElementById("newThreadForm")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const title = document.getElementById("threadTitleInput")?.value.trim();
+    const body = document.getElementById("threadBodyInput")?.value.trim();
+    if (!title || !body) return;
+    const u = getCurrentUser();
+    state.threads.unshift({
+      id: "th-" + Date.now(),
+      title,
+      body,
+      author: u ? u.username : "สมาชิก",
+      authorId: u ? u.id : "guest",
+      createdAt: new Date().toLocaleString("th-TH"),
+      replies: []
+    });
+    saveState();
+    e.target.reset();
+    e.target.classList.add("hidden");
+    renderThreads();
+  });
+  document.getElementById("threadList")?.addEventListener("submit", (e) => {
+    const form = e.target.closest(".reply-form");
+    if (!form) return;
+    e.preventDefault();
+    const text = form.querySelector(".reply-input")?.value.trim();
+    if (!text) return;
+    const u = getCurrentUser();
+    const thread = state.threads.find((t) => t.id === form.dataset.threadId);
+    if (!thread) return;
+    thread.replies.push({
+      id: "rp-" + Date.now(),
+      author: u ? u.username : "สมาชิก",
+      text,
+      createdAt: new Date().toLocaleString("th-TH")
+    });
+    saveState();
+    renderThreads();
+  });
+  applyLanguage();
   renderThreads();
+}
+
+function renderNotifications() {
+  document.getElementById("publicNotifCount").textContent = state.publicNotifications.length;
+  document.getElementById("adminNotifCount").textContent = state.adminNotifications.length;
+
+  const user = getCurrentUser();
+  const isAdmin = user?.role === "admin";
+  document.getElementById("openAdminNotifBtn").classList.toggle("hidden", !isAdmin);
+  document.getElementById("publicNotifForm").classList.toggle("hidden", !isAdmin);
+  if (!isAdmin) document.getElementById("adminNotifPanel").classList.add("hidden");
+
+  document.getElementById("publicNotifList").innerHTML = state.publicNotifications.length
+    ? state.publicNotifications
+        .map(
+          (n) => `
+          <div class="notif-item">
+            <div>
+              <div>${n.text}</div>
+              <div class="muted small-text">${n.createdAt}</div>
+            </div>
+            ${isAdmin ? `<button type="button" class="btn btn-soft" data-del-public-notif="${n.id}">ลบ</button>` : ""}
+          </div>`
+        )
+        .join("")
+    : '<p class="muted small-text">ยังไม่มีการแจ้งเตือน</p>';
+
+  document.getElementById("adminNotifList").innerHTML = state.adminNotifications.length
+    ? state.adminNotifications
+        .map(
+          (n) => `
+          <div class="notif-item">
+            <div>
+              <strong>[${n.type === "donate" ? "โดเนทใหม่" : "VIP ขอมอด"}]</strong> ${n.message}
+              <div class="muted small-text">${n.createdAt}</div>
+            </div>
+            <button type="button" class="btn btn-soft" data-del-admin-notif="${n.id}">รับทราบ</button>
+          </div>`
+        )
+        .join("")
+    : '<p class="muted small-text">ไม่มีแจ้งเตือนใหม่สำหรับผู้ดูแลระบบ</p>';
 }
 
 function renderHeaderAndProfile() {
   document.getElementById("siteTitle").textContent = state.settings.siteTitle;
-  document.getElementById("siteSubtitle").textContent = state.settings.siteSubtitle;
-
   const ann = document.getElementById("announcementBar");
   if (state.settings.announcement) {
     ann.textContent = state.settings.announcement;
@@ -305,22 +571,26 @@ function renderHeaderAndProfile() {
   const guestBox = document.getElementById("guestProfileBox");
   const userBox = document.getElementById("userProfileBox");
   const adminBadge = document.getElementById("adminBadge");
+  const vipBadge = document.getElementById("vipBadge");
+  const uploadBadge = document.getElementById("uploadPermissionBadge");
   const cmsBtn = document.getElementById("toggleCmsBtn");
   const cmsPanel = document.getElementById("cmsPanel");
 
   document.getElementById("guestAvatarImg").src = DEFAULT_AVATAR;
 
   if (!user) {
-    authBtn.textContent = "เข้าสู่ระบบ";
+    authBtn.textContent = state.lang === "en" ? "Login" : "เข้าสู่ระบบ";
     guestBox.classList.remove("hidden");
     userBox.classList.add("hidden");
     adminBadge.classList.add("hidden");
+    vipBadge.classList.add("hidden");
+    uploadBadge.classList.add("hidden");
     cmsBtn.classList.add("hidden");
     cmsPanel.classList.add("hidden");
     return;
   }
 
-  authBtn.textContent = `ออกจากระบบ (${user.username})`;
+  authBtn.textContent = state.lang === "en" ? `Logout (${user.username})` : `ออกจากระบบ (${user.username})`;
   guestBox.classList.add("hidden");
   userBox.classList.remove("hidden");
 
@@ -338,25 +608,38 @@ function renderHeaderAndProfile() {
   avatarFrame.className = `avatar-frame ${user.frameId || "frame-none"}`;
 
   const isAdmin = user.role === "admin";
+  const canUpload = canUserUploadMod(user);
+
   adminBadge.classList.toggle("hidden", !isAdmin);
-  cmsBtn.classList.toggle("hidden", !isAdmin);
-  if (!isAdmin) cmsPanel.classList.add("hidden");
+  vipBadge.classList.toggle("hidden", !user.isVip && !isAdmin);
+  uploadBadge.classList.toggle("hidden", !canUpload);
+  cmsBtn.classList.toggle("hidden", !isAdmin && !canUpload);
+
+  document.querySelectorAll(".admin-only-block").forEach((el) => el.classList.toggle("hidden", !isAdmin));
+  document.getElementById("modForm").classList.toggle("hidden", !canUpload);
+  if (!isAdmin && !canUpload) cmsPanel.classList.add("hidden");
 }
 
 function renderSidebars() {
-  const sortedUsers = [...state.users].sort((a, b) => b.exp - a.exp);
-  document.getElementById("userRankList").innerHTML = sortedUsers
-    .map(
-      (u, idx) => `
-      <div class="rank-item">
-        <div>
-          #${idx + 1} <strong>${u.username}</strong>
-          <div class="muted small-text">ID: ${u.id}</div>
-        </div>
-        <span>${u.exp} EXP</span>
-      </div>`
-    )
-    .join("");
+  // กรองบัญชีผู้ดูแลระบบ (admin) ออกจากอันดับ Rank ผู้ใช้ที่ EXP สูงสุด
+  const sortedMembers = [...state.users]
+    .filter((u) => u.role !== "admin")
+    .sort((a, b) => b.exp - a.exp);
+
+  document.getElementById("userRankList").innerHTML = sortedMembers.length
+    ? sortedMembers
+        .map(
+          (u, idx) => `
+          <div class="rank-item">
+            <div>
+              #${idx + 1} <strong>${u.username}</strong> ${u.isVip ? `<span class="vip-badge">VIP</span>` : ""}
+              <div class="muted small-text">ID: ${u.id}</div>
+            </div>
+            <span>${u.exp} EXP</span>
+          </div>`
+        )
+        .join("")
+    : '<p class="muted small-text">ยังไม่มีข้อมูลสมาชิก</p>';
 
   document.getElementById("rankTiersList").innerHTML = RANK_LEVELS.map(
     (r) => `<div class="tier-item"><span>${r.name}</span><span>${r.minExp} EXP</span></div>`
@@ -424,6 +707,34 @@ function renderMods() {
     .join("");
 }
 
+function renderPublicRequests() {
+  document.getElementById("reqTabNormalBtn").classList.toggle("active", state.requestTabMode === "normal");
+  document.getElementById("reqTabAdultBtn").classList.toggle("active", state.requestTabMode === "18+");
+
+  const filtered = state.requests.filter((r) => (r.rating || "normal") === state.requestTabMode);
+  const box = document.getElementById("publicRequestList");
+  if (!filtered.length) {
+    box.innerHTML = `<p class="muted small-text">ยังไม่มีรายชื่อเกมที่ขอในหมวด "${state.requestTabMode === "18+" ? "เกม 18+" : "เกมปกติ"}"</p>`;
+    return;
+  }
+
+  box.innerHTML = filtered
+    .map(
+      (r) => `
+      <div class="request-public-item">
+        <div>
+          <strong>${r.game}</strong>
+          ${(r.rating || "normal") === "18+" ? `<span class="badge-18">18+</span>` : ""}
+          ${r.isVipRequest ? `<span class="vip-badge">VIP ขอพิเศษ</span>` : ""}
+          <div class="muted small-text">ขอโดย: ${r.by} · ${r.createdAt || ""}</div>
+          <div class="small-text">${r.note || "-"}</div>
+        </div>
+        <button type="button" class="btn btn-soft" data-vote-request="${r.id}">▲ โหวต (${r.votes || 0})</button>
+      </div>`
+    )
+    .join("");
+}
+
 function renderAdminLists() {
   const user = getCurrentUser();
   if (!user || user.role !== "admin") return;
@@ -436,31 +747,51 @@ function renderAdminLists() {
           <strong>${u.username}</strong>
           <span class="userid-badge">ID: ${u.id}</span>
           <span class="provider-badge">${u.provider || "local"}</span>
+          ${u.isVip ? `<span class="vip-badge">VIP</span>` : ""}
+          ${u.canUploadMod || u.role === "admin" ? `<span class="upload-badge">สิทธิ์ลงมอด</span>` : ""}
           <div class="muted small-text">คะแนน: ${u.points} | EXP: ${u.exp}</div>
         </div>
         <div class="admin-grant-controls">
-          <input type="number" class="admin-grant-input" data-pts-input="${u.id}" value="20" step="1" aria-label="จำนวนคะแนน" />
+          <input type="number" class="admin-grant-input" data-pts-input="${u.id}" value="20" step="1" />
           <button type="button" class="btn btn-soft" data-grant-points="${u.id}">ให้คะแนน</button>
-          <input type="number" class="admin-grant-input" data-exp-input="${u.id}" value="50" step="1" aria-label="จำนวน EXP" />
+          <input type="number" class="admin-grant-input" data-exp-input="${u.id}" value="50" step="1" />
           <button type="button" class="btn btn-soft" data-grant-exp="${u.id}">ให้ EXP</button>
+          <button type="button" class="btn btn-soft" data-bind-oauth="${u.id}">ผูก OAuth ID</button>
+          ${
+            u.role !== "admin"
+              ? `<button type="button" class="btn btn-vip" data-toggle-vip="${u.id}">${u.isVip ? "ถอด VIP" : "ตั้งเป็น VIP"}</button>
+                 <button type="button" class="btn btn-soft" data-toggle-upload="${u.id}">${u.canUploadMod ? "ถอดสิทธิ์ลงมอด" : "อนุญาตลงมอด"}</button>
+                 <button type="button" class="btn btn-danger" data-delete-user="${u.id}">ลบบัญชี</button>`
+              : ""
+          }
         </div>
       </div>`
     )
     .join("");
 
-  document.getElementById("adminRequestList").innerHTML = state.requests.length
-    ? state.requests
+  document.getElementById("adminDonateList").innerHTML = state.donations.length
+    ? state.donations
         .map(
-          (r) => `
-          <div class="admin-row">
+          (d) => `
+          <div class="admin-user-card">
             <div>
-              <strong>${r.game}</strong> <span class="muted small-text">(${r.by})</span>
-              <div class="muted small-text">${r.note || "-"}</div>
+              <strong>${d.sender}</strong> — <span class="vip-badge">${d.amount} บาท</span>
+              <span class="muted small-text">(${d.status === "approved" ? "อนุมัติแล้ว" : "รอตรวจสอบ"})</span>
+              <div class="muted small-text">${d.note || "-"} · ${d.createdAt}</div>
+              ${d.slip ? `<img src="${d.slip}" alt="หลักฐานสลิป" class="mod-preview-img" />` : ""}
+            </div>
+            <div class="admin-grant-controls">
+              ${
+                d.status !== "approved"
+                  ? `<button type="button" class="btn btn-primary" data-approve-donate="${d.id}">อนุมัติ & มอบ VIP</button>`
+                  : ""
+              }
+              <button type="button" class="btn btn-soft" data-delete-donate="${d.id}">ลบรายการ</button>
             </div>
           </div>`
         )
         .join("")
-    : '<p class="muted small-text">ยังไม่มีคำขอมอด</p>';
+    : '<p class="muted small-text">ยังไม่มีรายการแจ้งโดเนท</p>';
 }
 
 function renderBugAdminList() {
@@ -487,12 +818,68 @@ function renderBugAdminList() {
 }
 
 function bindHomeEvents() {
+  document.getElementById("langToggleBtn").addEventListener("click", () => {
+    state.lang = state.lang === "th" ? "en" : "th";
+    saveState(false);
+    applyLanguage();
+    renderHeaderAndProfile();
+  });
+
+  document.getElementById("openPublicNotifBtn").addEventListener("click", () => {
+    document.getElementById("publicNotifPanel").classList.toggle("hidden");
+  });
+  document.getElementById("closePublicNotifBtn").addEventListener("click", () => {
+    document.getElementById("publicNotifPanel").classList.add("hidden");
+  });
+  document.getElementById("publicNotifForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const input = document.getElementById("publicNotifInput");
+    const text = input.value.trim();
+    if (!text) return;
+    state.publicNotifications.unshift({
+      id: "pn-" + Date.now(),
+      text,
+      createdAt: new Date().toLocaleString("th-TH")
+    });
+    saveState();
+    e.target.reset();
+    renderNotifications();
+  });
+  document.getElementById("publicNotifList").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-del-public-notif]");
+    if (!btn) return;
+    state.publicNotifications = state.publicNotifications.filter((n) => n.id !== btn.dataset.delPublicNotif);
+    saveState();
+    renderNotifications();
+  });
+
+  document.getElementById("openAdminNotifBtn").addEventListener("click", () => {
+    document.getElementById("adminNotifPanel").classList.toggle("hidden");
+  });
+  document.getElementById("closeAdminNotifBtn").addEventListener("click", () => {
+    document.getElementById("adminNotifPanel").classList.add("hidden");
+  });
+  document.getElementById("clearAdminNotifBtn").addEventListener("click", () => {
+    state.adminNotifications = [];
+    saveState();
+    renderNotifications();
+  });
+  document.getElementById("adminNotifList").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-del-admin-notif]");
+    if (!btn) return;
+    state.adminNotifications = state.adminNotifications.filter((n) => n.id !== btn.dataset.delAdminNotif);
+    saveState();
+    renderNotifications();
+  });
+
   document.getElementById("authBtn").addEventListener("click", () => {
     if (getCurrentUser()) {
       state.currentUserId = null;
       saveState();
       renderAll();
     } else {
+      selectedSocialProvider = null;
+      document.getElementById("socialIdFormBox").classList.add("hidden");
       document.getElementById("authModal").classList.remove("hidden");
     }
   });
@@ -504,31 +891,66 @@ function bindHomeEvents() {
   document.getElementById("authModal").addEventListener("click", (e) => {
     const socialBtn = e.target.closest("[data-social-provider]");
     if (!socialBtn) return;
+    selectedSocialProvider = socialBtn.dataset.socialProvider.toLowerCase();
+    document.getElementById("socialIdLabel").textContent = `กรอก ${socialBtn.dataset.socialProvider} ID จริงที่ผูกไว้ในระบบ`;
+    document.getElementById("socialAccountIdInput").value = "";
+    document.getElementById("socialIdFormBox").classList.remove("hidden");
+    document.getElementById("socialAccountIdInput").focus();
+  });
 
-    const provider = socialBtn.dataset.socialProvider;
-    const customName = prompt(`เข้าสู่ระบบด้วย ${provider} — กรอกชื่อบัญชีที่ต้องการใช้:`, `${provider.toLowerCase()}_user`);
-    if (!customName || !customName.trim()) return;
+  document.getElementById("cancelSocialLoginBtn").addEventListener("click", () => {
+    selectedSocialProvider = null;
+    document.getElementById("socialIdFormBox").classList.add("hidden");
+  });
 
-    const cleanName = customName.trim();
-    const accountKey = `${provider.toLowerCase()}:${cleanName.toLowerCase()}`;
-    let found = state.users.find((u) => u.socialKey === accountKey);
-
-    if (!found) {
-      found = normalizeUser({
-        id: "u-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
-        username: cleanName,
-        password: "",
-        role: "member",
-        provider,
-        socialKey: accountKey,
-        points: 20,
-        exp: 10
-      });
-      state.users.push(found);
+  document.getElementById("confirmSocialLoginBtn").addEventListener("click", async () => {
+    const rawId = document.getElementById("socialAccountIdInput").value.trim();
+    if (!selectedSocialProvider || !rawId) {
+      alert("กรุณากรอก ID บัญชีจริงก่อนครับ");
+      return;
     }
 
-    state.currentUserId = found.id;
+    if (backendOnline) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/auth/oauth`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ provider: selectedSocialProvider, oauthId: rawId })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alert(data.error || "ไม่พบ ID บัญชีจริงที่ผูกไว้ในระบบครับ");
+          return;
+        }
+        const matched = normalizeUser(data.user);
+        const idx = state.users.findIndex((u) => u.id === matched.id);
+        if (idx >= 0) state.users[idx] = matched;
+        else state.users.push(matched);
+        state.currentUserId = matched.id;
+        saveState(false);
+        selectedSocialProvider = null;
+        document.getElementById("socialIdFormBox").classList.add("hidden");
+        document.getElementById("authModal").classList.add("hidden");
+        renderAll();
+        return;
+      } catch {
+        backendOnline = false;
+      }
+    }
+
+    const matchedUser = state.users.find(
+      (u) => (u.socialIds?.[selectedSocialProvider] || "").trim().toLowerCase() === rawId.toLowerCase()
+    );
+    if (!matchedUser) {
+      alert("ไม่พบ ID บัญชีจริงที่ผูกไว้ในระบบครับ");
+      return;
+    }
+
+    matchedUser.provider = selectedSocialProvider;
+    state.currentUserId = matchedUser.id;
     saveState();
+    selectedSocialProvider = null;
+    document.getElementById("socialIdFormBox").classList.add("hidden");
     document.getElementById("authModal").classList.add("hidden");
     renderAll();
   });
@@ -541,7 +963,7 @@ function bindHomeEvents() {
 
     if (found) {
       if (found.password !== password) {
-        alert("รหัสผ่านไม่ถูกต้องครับ สามารถกด 'กู้คืนบัญชี' เพื่อตั้งรหัสผ่านใหม่ได้");
+        alert("รหัสผ่านไม่ถูกต้องครับ");
         return;
       }
     } else {
@@ -550,6 +972,8 @@ function bindHomeEvents() {
         username,
         password,
         role: "member",
+        isVip: false,
+        canUploadMod: false,
         provider: "local",
         points: 20,
         exp: 10
@@ -567,11 +991,9 @@ function bindHomeEvents() {
   document.getElementById("openRecoverBtn").addEventListener("click", () => {
     document.getElementById("recoverModal").classList.remove("hidden");
   });
-
   document.getElementById("closeRecoverModalBtn").addEventListener("click", () => {
     document.getElementById("recoverModal").classList.add("hidden");
   });
-
   document.getElementById("recoverForm").addEventListener("submit", (e) => {
     e.preventDefault();
     const identifier = document.getElementById("recoverIdentifierInput").value.trim();
@@ -579,47 +1001,150 @@ function bindHomeEvents() {
     const target = state.users.find(
       (u) => u.id.toLowerCase() === identifier.toLowerCase() || u.username.toLowerCase() === identifier.toLowerCase()
     );
-
     if (!target) {
       alert("ไม่พบบัญชีที่ตรงกับ UserID หรือชื่อผู้ใช้ที่ระบุครับ");
       return;
     }
-
     target.password = newPass;
     state.currentUserId = target.id;
     saveState();
     e.target.reset();
     document.getElementById("recoverModal").classList.add("hidden");
     renderAll();
-    alert(`กู้คืนบัญชี ${target.username} (ID: ${target.id}) และตั้งรหัสผ่านใหม่เรียบร้อยแล้วครับ`);
+    alert(`กู้คืนบัญชี ${target.username} เรียบร้อยแล้วครับ`);
   });
 
+  // หน้าขอมอดแปลไทยเกมต่อไป (ดูรายชื่อสาธารณะ แยกปกติ / 18+)
   document.getElementById("openRequestBtn").addEventListener("click", () => {
+    renderPublicRequests();
     document.getElementById("requestModal").classList.remove("hidden");
   });
-
   document.getElementById("closeRequestModalBtn").addEventListener("click", () => {
     document.getElementById("requestModal").classList.add("hidden");
   });
-
+  document.getElementById("reqTabNormalBtn").addEventListener("click", () => {
+    state.requestTabMode = "normal";
+    renderPublicRequests();
+  });
+  document.getElementById("reqTabAdultBtn").addEventListener("click", () => {
+    state.requestTabMode = "18+";
+    renderPublicRequests();
+  });
+  document.getElementById("toggleNewRequestFormBtn").addEventListener("click", () => {
+    document.getElementById("requestForm").classList.toggle("hidden");
+  });
   document.getElementById("requestForm").addEventListener("submit", (e) => {
     e.preventDefault();
     const user = getCurrentUser();
     const game = document.getElementById("requestGameInput").value.trim();
+    const rating = document.getElementById("requestRatingInput").value;
     const note = document.getElementById("requestNoteInput").value.trim();
     if (!game) return;
+
+    const isVipRequest = Boolean(user?.isVip || user?.role === "admin");
+    const byLabel = user ? `${user.username} (${user.id})` : "ผู้เยี่ยมชม";
 
     state.requests.unshift({
       id: "req-" + Date.now(),
       game,
+      rating,
       note,
-      by: user ? `${user.username} (${user.id})` : "ผู้เยี่ยมชม"
+      by: byLabel,
+      isVipRequest,
+      votes: 1,
+      createdAt: new Date().toLocaleString("th-TH")
     });
+
+    if (isVipRequest) {
+      pushAdminAlert("vip_request", `บัญชี VIP ${byLabel} ขอมอดแปลไทยเกม "${game}" (${rating})`);
+    }
+
+    state.requestTabMode = rating;
     saveState();
     e.target.reset();
-    document.getElementById("requestModal").classList.add("hidden");
-    renderAdminLists();
-    alert("ส่งคำขอมอดเรียบร้อยแล้วครับ");
+    e.target.classList.add("hidden");
+    renderPublicRequests();
+    renderNotifications();
+  });
+  document.getElementById("publicRequestList").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-vote-request]");
+    if (!btn) return;
+    const req = state.requests.find((r) => r.id === btn.dataset.voteRequest);
+    if (req) {
+      req.votes = Number(req.votes || 0) + 1;
+      saveState();
+      renderPublicRequests();
+    }
+  });
+
+  // ระบบโดเนท & ส่งหลักฐานให้ผู้ดูแลระบบ
+  document.getElementById("openDonateBtn").addEventListener("click", () => {
+    const user = getCurrentUser();
+    if (user) {
+      document.getElementById("donateSenderInput").value = `${user.username} (${user.id})`;
+    }
+    document.getElementById("donateModal").classList.remove("hidden");
+  });
+  document.getElementById("closeDonateModalBtn").addEventListener("click", () => {
+    document.getElementById("donateModal").classList.add("hidden");
+  });
+
+  const donateUrlInput = document.getElementById("donateSlipUrlInput");
+  const donateFileInput = document.getElementById("donateSlipFileInput");
+  const donatePreview = document.getElementById("donateSlipPreview");
+
+  donateUrlInput.addEventListener("input", () => {
+    const val = donateUrlInput.value.trim();
+    if (val) {
+      uploadedDonateSlipDataUrl = "";
+      donatePreview.src = val;
+      donatePreview.classList.remove("hidden");
+    } else {
+      donatePreview.classList.add("hidden");
+    }
+  });
+
+  donateFileInput.addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      uploadedDonateSlipDataUrl = String(reader.result || "");
+      donateUrlInput.value = "";
+      donatePreview.src = uploadedDonateSlipDataUrl;
+      donatePreview.classList.remove("hidden");
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById("donateForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const user = getCurrentUser();
+    const sender = document.getElementById("donateSenderInput").value.trim();
+    const amount = Number(document.getElementById("donateAmountInput").value || 0);
+    const note = document.getElementById("donateNoteInput").value.trim();
+    const slip = uploadedDonateSlipDataUrl || donateUrlInput.value.trim() || "";
+    if (!sender || amount <= 0) return;
+
+    state.donations.unshift({
+      id: "don-" + Date.now(),
+      userId: user ? user.id : null,
+      sender,
+      amount,
+      slip,
+      note,
+      status: "pending",
+      createdAt: new Date().toLocaleString("th-TH")
+    });
+
+    pushAdminAlert("donate", `${sender} ส่งหลักฐานการโดเนทจำนวน ${amount} บาท`);
+    saveState();
+    e.target.reset();
+    uploadedDonateSlipDataUrl = "";
+    donatePreview.classList.add("hidden");
+    document.getElementById("donateModal").classList.add("hidden");
+    renderAll();
+    alert("ส่งหลักฐานการโดเนทให้ผู้ดูแลระบบเรียบร้อยแล้วครับ");
   });
 
   document.getElementById("toggleCmsBtn").addEventListener("click", () => {
@@ -631,23 +1156,14 @@ function bindHomeEvents() {
   const fileInput = document.getElementById("modImageFileInput");
   const preview = document.getElementById("modImagePreview");
 
-  const updatePreview = (src) => {
-    if (src) {
-      preview.src = src;
-      preview.classList.remove("hidden");
-    } else {
-      preview.src = "";
-      preview.classList.add("hidden");
-    }
-  };
-
   urlInput.addEventListener("input", () => {
     const val = urlInput.value.trim();
     if (val) {
       uploadedModImageDataUrl = "";
-      updatePreview(val);
+      preview.src = val;
+      preview.classList.remove("hidden");
     } else {
-      updatePreview(uploadedModImageDataUrl);
+      preview.classList.add("hidden");
     }
   });
 
@@ -658,13 +1174,17 @@ function bindHomeEvents() {
     reader.onload = () => {
       uploadedModImageDataUrl = String(reader.result || "");
       urlInput.value = "";
-      updatePreview(uploadedModImageDataUrl);
+      preview.src = uploadedModImageDataUrl;
+      preview.classList.remove("hidden");
     };
     reader.readAsDataURL(file);
   });
 
   document.getElementById("modForm").addEventListener("submit", (e) => {
     e.preventDefault();
+    const user = getCurrentUser();
+    if (!canUserUploadMod(user)) return;
+
     const title = document.getElementById("modTitleInput").value.trim();
     const category = document.getElementById("modCategoryInput").value.trim();
     const rating = document.getElementById("modRatingInput").value;
@@ -686,7 +1206,7 @@ function bindHomeEvents() {
     saveState();
     e.target.reset();
     uploadedModImageDataUrl = "";
-    updatePreview("");
+    preview.classList.add("hidden");
     renderMods();
   });
 
@@ -698,13 +1218,7 @@ function bindHomeEvents() {
     const unlockExp = Math.max(0, Number(document.getElementById("cosmeticReqExp").value || 0));
     if (!value) return;
 
-    state.cosmetics.push({
-      id: "c-" + Date.now(),
-      type,
-      value,
-      unlockPoints,
-      unlockExp
-    });
+    state.cosmetics.push({ id: "c-" + Date.now(), type, value, unlockPoints, unlockExp });
     saveState();
     e.target.reset();
     renderSidebars();
@@ -721,25 +1235,23 @@ function bindHomeEvents() {
     if (item.type === "title") user.titleLabel = item.value;
     if (item.type === "frame") user.frameId = item.value;
     if (item.type === "avatar") user.avatarSrc = item.value;
-
     saveState();
     renderAll();
   });
 
-  document.getElementById("adminUserList").addEventListener("click", (e) => {
+  document.getElementById("adminUserList").addEventListener("click", async (e) => {
     const ptsBtn = e.target.closest("[data-grant-points]");
     const expBtn = e.target.closest("[data-grant-exp]");
+    const bindBtn = e.target.closest("[data-bind-oauth]");
+    const vipBtn = e.target.closest("[data-toggle-vip]");
+    const uploadBtn = e.target.closest("[data-toggle-upload]");
+    const delBtn = e.target.closest("[data-delete-user]");
 
     if (ptsBtn) {
       const userId = ptsBtn.dataset.grantPoints;
-      const input = document.querySelector(`[data-pts-input="${userId}"]`);
-      const amount = Number(input?.value);
-      if (!Number.isFinite(amount) || amount === 0) {
-        alert("กรุณากรอกจำนวนคะแนนที่ไม่ใช่ 0 ครับ");
-        return;
-      }
+      const amount = Number(document.querySelector(`[data-pts-input="${userId}"]`)?.value);
       const target = state.users.find((u) => u.id === userId);
-      if (target) {
+      if (target && Number.isFinite(amount) && amount !== 0) {
         target.points = Number(target.points || 0) + amount;
         saveState();
         renderAll();
@@ -748,25 +1260,91 @@ function bindHomeEvents() {
 
     if (expBtn) {
       const userId = expBtn.dataset.grantExp;
-      const input = document.querySelector(`[data-exp-input="${userId}"]`);
-      const amount = Number(input?.value);
-      if (!Number.isFinite(amount) || amount === 0) {
-        alert("กรุณากรอกจำนวน EXP ที่ไม่ใช่ 0 ครับ");
-        return;
-      }
+      const amount = Number(document.querySelector(`[data-exp-input="${userId}"]`)?.value);
       const target = state.users.find((u) => u.id === userId);
-      if (target) {
+      if (target && Number.isFinite(amount) && amount !== 0) {
         target.exp = Math.max(0, Number(target.exp || 0) + amount);
         saveState();
         renderAll();
       }
     }
+
+    if (bindBtn) {
+      const target = state.users.find((u) => u.id === bindBtn.dataset.bindOauth);
+      if (!target) return;
+      const provider = (prompt("ระบุผู้ให้บริการ (google / facebook / discord / twitter):", "google") || "").trim().toLowerCase();
+      if (!["google", "facebook", "discord", "twitter"].includes(provider)) return;
+      const oauthId = prompt(`กรอก ${provider} ID จริง:`, target.socialIds?.[provider] || "");
+      if (!oauthId || !oauthId.trim()) return;
+      target.socialIds[provider] = oauthId.trim();
+      saveState();
+      renderAll();
+    }
+
+    if (vipBtn) {
+      const target = state.users.find((u) => u.id === vipBtn.dataset.toggleVip);
+      if (target) {
+        target.isVip = !target.isVip;
+        saveState();
+        renderAll();
+      }
+    }
+
+    if (uploadBtn) {
+      const target = state.users.find((u) => u.id === uploadBtn.dataset.toggleUpload);
+      if (target) {
+        target.canUploadMod = !target.canUploadMod;
+        saveState();
+        renderAll();
+      }
+    }
+
+    if (delBtn) {
+      const targetId = delBtn.dataset.deleteUser;
+      const target = state.users.find((u) => u.id === targetId);
+      if (!target || target.role === "admin") return;
+      if (!confirm(`ยืนยันการลบบัญชี "${target.username}" ถาวรหรือไม่?`)) return;
+      state.users = state.users.filter((u) => u.id !== targetId);
+      if (state.currentUserId === targetId) state.currentUserId = null;
+      saveState();
+      renderAll();
+    }
+  });
+
+  document.getElementById("adminDonateList").addEventListener("click", (e) => {
+    const approveBtn = e.target.closest("[data-approve-donate]");
+    const delBtn = e.target.closest("[data-delete-donate]");
+
+    if (approveBtn) {
+      const don = state.donations.find((d) => d.id === approveBtn.dataset.approveDonate);
+      if (!don) return;
+      don.status = "approved";
+      if (don.userId) {
+        const member = state.users.find((u) => u.id === don.userId);
+        if (member) {
+          member.isVip = true;
+          member.titleLabel = "ผู้สนับสนุน VIP";
+        }
+      }
+      state.publicNotifications.unshift({
+        id: "pn-" + Date.now(),
+        text: `ขอบคุณคุณ ${don.sender} สำหรับการโดเนทสนับสนุนจำนวน ${don.amount} บาท!`,
+        createdAt: new Date().toLocaleString("th-TH")
+      });
+      saveState();
+      renderAll();
+    }
+
+    if (delBtn) {
+      state.donations = state.donations.filter((d) => d.id !== delBtn.dataset.deleteDonate);
+      saveState();
+      renderAdminLists();
+    }
   });
 
   const switchMode = (targetMode) => {
     if (targetMode === "18+" && state.contentMode !== "18+") {
-      const ok = confirm("โหมดนี้สำหรับมอดเกม 18+ ยืนยันว่ามีอายุตามเกณฑ์ที่กำหนดหรือไม่?");
-      if (!ok) return;
+      if (!confirm("โหมดนี้สำหรับมอดเกม 18+ ยืนยันว่ามีอายุตามเกณฑ์ที่กำหนดหรือไม่?")) return;
     }
     state.contentMode = targetMode;
     saveState();
@@ -776,7 +1354,6 @@ function bindHomeEvents() {
 
   document.getElementById("modeNormalBtn").addEventListener("click", () => switchMode("normal"));
   document.getElementById("modeAdultBtn").addEventListener("click", () => switchMode("18+"));
-
   document.getElementById("searchModInput").addEventListener("input", renderMods);
   document.getElementById("categoryFilter").addEventListener("change", renderMods);
 
@@ -795,18 +1372,15 @@ function bindHomeEvents() {
     document.getElementById("bugModal").classList.remove("hidden");
     renderBugAdminList();
   });
-
   document.getElementById("closeBugModalBtn").addEventListener("click", () => {
     document.getElementById("bugModal").classList.add("hidden");
   });
-
   document.getElementById("bugReportForm").addEventListener("submit", (e) => {
     e.preventDefault();
     const target = document.getElementById("bugTargetInput").value.trim();
     const description = document.getElementById("bugDescInput").value.trim();
     if (!target || !description) return;
     const user = getCurrentUser();
-
     state.bugReports.unshift({
       id: "bug-" + Date.now(),
       target,
@@ -817,9 +1391,7 @@ function bindHomeEvents() {
     saveState();
     e.target.reset();
     renderBugAdminList();
-    alert("ส่งรายงานบัคเรียบร้อยแล้ว ขอบคุณที่ช่วยแจ้งครับ");
   });
-
   document.getElementById("bugAdminList").addEventListener("click", (e) => {
     const btn = e.target.closest("[data-delete-bug]");
     if (!btn) return;
@@ -840,7 +1412,9 @@ function bindHomeEvents() {
 }
 
 function renderAll() {
+  applyLanguage();
   renderHeaderAndProfile();
+  renderNotifications();
   renderSidebars();
   renderMods();
   renderAdminLists();
@@ -852,4 +1426,5 @@ if (document.body.dataset.page === "forum") {
 } else {
   bindHomeEvents();
   renderAll();
+  checkBackendConnection();
 }

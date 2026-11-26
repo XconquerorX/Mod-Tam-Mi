@@ -11,11 +11,6 @@
   <link rel="canonical" href="https://xconquerorx.github.io/Mod-Tam-Mi/" />
   <meta name="google-site-verification" content="rxh_BEmrxqbp4KW6kVt7iecRztrvOXPbIbHPFUIjPNU" />
 
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Thai Mod Hub — ศูนย์รวมมอดเกมแปลไทย" />
-  <meta property="og:description" content="รวมมอดเกมแปลไทย อ่านง่าย ใช้งานสะดวก ค้นหาง่าย ดาวน์โหลดได้ทันที" />
-  <meta property="og:url" content="https://xconquerorx.github.io/Mod-Tam-Mi/" />
-
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Prompt:wght@500;600;700&display=swap" rel="stylesheet" />
@@ -27,16 +22,19 @@
 
     <header class="site-header">
       <div class="header-left">
-        <button type="button" id="authBtn" class="btn btn-primary">เข้าสู่ระบบ</button>
-        <button type="button" id="openRecoverBtn" class="btn btn-soft">กู้คืนบัญชี</button>
-        <button type="button" id="openRequestBtn" class="btn btn-vip">ขอมอดแปลไทยเกมต่อไป</button>
-        <a href="forum.html" target="_blank" rel="noopener noreferrer" class="btn btn-soft">เปิดหน้ากระทู้</a>
-        <span id="adminBadge" class="role-badge hidden">ผู้ดูแลระบบ (Admin)</span>
+        <button type="button" id="authBtn" class="btn btn-primary" data-i18n="login">เข้าสู่ระบบ</button>
+        <button type="button" id="openRecoverBtn" class="btn btn-soft" data-i18n="recover">กู้คืนบัญชี</button>
+        <button type="button" id="openRequestBtn" class="btn btn-vip" data-i18n="requestMod">ขอมอดแปลไทยเกมต่อไป</button>
+        <button type="button" id="openDonateBtn" class="btn btn-donate" data-i18n="donate">โดเนท</button>
+        <a href="forum.html" target="_blank" rel="noopener noreferrer" class="btn btn-soft" data-i18n="openForum">เปิดหน้ากระทู้</a>
+        <span id="adminBadge" class="role-badge hidden" data-i18n="adminRole">ผู้ดูแลระบบ (Admin)</span>
+        <span id="vipBadge" class="vip-badge hidden">VIP</span>
+        <span id="uploadPermissionBadge" class="upload-badge hidden" data-i18n="uploadPerm">สิทธิ์ลงมอด</span>
       </div>
 
       <div class="header-center">
         <h1 id="siteTitle" class="brand-title">Thai Mod Hub</h1>
-        <p id="siteSubtitle" class="brand-sub">รวมมอดเกมแปลไทย อ่านง่าย ใช้งานสะดวก ดาวน์โหลดฟรี</p>
+        <p id="siteSubtitle" class="brand-sub" data-i18n="siteSubtitle">รวมมอดเกมแปลไทย อ่านง่าย ใช้งานสะดวก ดาวน์โหลดฟรี</p>
       </div>
 
       <div class="header-right">
@@ -46,8 +44,8 @@
               <img id="guestAvatarImg" src="" alt="Guest Avatar" />
             </div>
             <div class="profile-info-col">
-              <strong>โปรไฟล์ผู้เยี่ยมชม</strong>
-              <div class="muted small-text">ล็อกอินเพื่อรับ UserID สะสมคะแนน/EXP ปลดล็อกยศ และของตกแต่ง</div>
+              <strong data-i18n="guestProfile">โปรไฟล์ผู้เยี่ยมชม</strong>
+              <div class="muted small-text" data-i18n="guestHint">ล็อกอินเพื่อรับ UserID สะสมคะแนน/EXP ปลดล็อกยศ และของตกแต่ง</div>
             </div>
           </div>
         </div>
@@ -66,14 +64,14 @@
               </div>
               <div id="userRankText" class="rank-text">-</div>
               <div class="stats-row">
-                <span>คะแนน: <strong id="userPointsText">0</strong></span>
+                <span><span data-i18n="points">คะแนน</span>: <strong id="userPointsText">0</strong></span>
                 <span>EXP: <strong id="userExpText">0</strong></span>
               </div>
             </div>
           </div>
           <div class="profile-actions">
-            <button type="button" id="openCosmeticBtn" class="btn btn-soft">แต่งโปรไฟล์</button>
-            <button type="button" id="toggleCmsBtn" class="btn btn-primary hidden">แผงแอดมิน (CMS)</button>
+            <button type="button" id="openCosmeticBtn" class="btn btn-soft" data-i18n="customizeProfile">แต่งโปรไฟล์</button>
+            <button type="button" id="toggleCmsBtn" class="btn btn-primary hidden" data-i18n="cmsPanelBtn">แผงแอดมิน (CMS)</button>
           </div>
         </div>
       </div>
@@ -81,60 +79,96 @@
 
     <div class="mode-and-actions">
       <div class="content-mode-switch" role="group" aria-label="โหมดเนื้อหามอด">
-        <button type="button" id="modeNormalBtn" class="btn mode-btn active" data-mode="normal">มอดเกมปกติ</button>
-        <button type="button" id="modeAdultBtn" class="btn mode-btn adult" data-mode="18+">มอดเกม 18+</button>
+        <button type="button" id="modeNormalBtn" class="btn mode-btn active" data-mode="normal" data-i18n="normalMod">มอดเกมปกติ</button>
+        <button type="button" id="modeAdultBtn" class="btn mode-btn adult" data-mode="18+" data-i18n="adultMod">มอดเกม 18+</button>
       </div>
       <div class="header-right-actions">
-        <button type="button" id="exportDataBtn" class="btn btn-soft">Export ข้อมูล</button>
-        <button type="button" id="openBugModalBtn" class="btn btn-danger-soft">แจ้งบัค</button>
+        <button type="button" id="langToggleBtn" class="btn btn-soft">EN / ไทย</button>
+        <button type="button" id="openPublicNotifBtn" class="btn btn-soft">
+          <span data-i18n="notifications">แจ้งเตือน</span> (<span id="publicNotifCount">0</span>)
+        </button>
+        <button type="button" id="openAdminNotifBtn" class="btn btn-vip hidden">
+          <span data-i18n="adminAlerts">แจ้งเตือนแอดมิน</span> (<span id="adminNotifCount">0</span>)
+        </button>
+        <span id="backendStatusBadge" class="provider-badge" data-i18n="localMode">โหมด LocalStorage</span>
+        <button type="button" id="exportDataBtn" class="btn btn-soft" data-i18n="exportData">Export ข้อมูล</button>
+        <button type="button" id="openBugModalBtn" class="btn btn-danger-soft" data-i18n="reportBug">แจ้งบัค</button>
       </div>
     </div>
 
-    <section id="cmsPanel" class="cms-panel hidden">
-      <h2>แผงควบคุมผู้ดูแลระบบ (CMS)</h2>
+    <!-- กล่องแจ้งเตือนสำหรับทุกคน & กล่องแจ้งเตือนเฉพาะผู้ดูแลระบบ -->
+    <div class="notification-banners">
+      <section id="publicNotifPanel" class="notif-box hidden">
+        <div class="cms-header-row">
+          <h3 data-i18n="publicNotifTitle">กล่องแจ้งเตือนสำหรับทุกคน</h3>
+          <button type="button" id="closePublicNotifBtn" class="btn-close">✕</button>
+        </div>
+        <form id="publicNotifForm" class="inline-notif-form admin-only-block hidden">
+          <input type="text" id="publicNotifInput" placeholder="พิมพ์ข้อความแจ้งเตือนสำหรับสมาชิกทุกคน..." required />
+          <button type="submit" class="btn btn-primary" data-i18n="sendNotif">ส่งแจ้งเตือน</button>
+        </form>
+        <div id="publicNotifList" class="notif-list"></div>
+      </section>
 
-      <div class="cms-grid">
+      <section id="adminNotifPanel" class="notif-box admin-alert-box hidden">
+        <div class="cms-header-row">
+          <h3 data-i18n="adminNotifTitle">กล่องแจ้งเตือนผู้ดูแลระบบ (VIP ขอมอด & แจ้งโดเนท)</h3>
+          <div class="header-right-actions">
+            <button type="button" id="clearAdminNotifBtn" class="btn btn-soft" data-i18n="clearRead">ล้างที่อ่านแล้ว</button>
+            <button type="button" id="closeAdminNotifBtn" class="btn-close">✕</button>
+          </div>
+        </div>
+        <div id="adminNotifList" class="notif-list"></div>
+      </section>
+    </div>
+
+    <section id="cmsPanel" class="cms-panel hidden">
+      <div class="cms-header-row">
+        <h2 id="cmsSectionTitle">แผงควบคุมผู้ดูแลระบบ (CMS)</h2>
+      </div>
+
+      <div id="cmsGrid" class="cms-grid">
         <form id="modForm" class="card-box">
-          <h3>เพิ่ม / ลงมอดแปลไทยใหม่</h3>
+          <h3 data-i18n="addNewMod">เพิ่ม / ลงมอดแปลไทยใหม่</h3>
           <div class="form-group">
-            <label for="modTitleInput">ชื่อมอด / ชื่อเกม</label>
+            <label for="modTitleInput" data-i18n="modName">ชื่อมอด / ชื่อเกม</label>
             <input type="text" id="modTitleInput" placeholder="เช่น Stardew Valley แปลไทย" required />
           </div>
           <div class="form-group">
-            <label for="modCategoryInput">หมวดหมู่</label>
+            <label for="modCategoryInput" data-i18n="category">หมวดหมู่</label>
             <input type="text" id="modCategoryInput" placeholder="เช่น RPG / Simulation / Survival" required />
           </div>
           <div class="form-group">
-            <label for="modRatingInput">โหมดเนื้อหา</label>
+            <label for="modRatingInput" data-i18n="contentRating">โหมดเนื้อหา</label>
             <select id="modRatingInput">
               <option value="normal">มอดเกมปกติ</option>
               <option value="18+">มอดเกม 18+</option>
             </select>
           </div>
           <div class="form-group">
-            <label for="modDescInput">รายละเอียดมอด</label>
+            <label for="modDescInput" data-i18n="modDesc">รายละเอียดมอด</label>
             <textarea id="modDescInput" rows="2" placeholder="รายละเอียดการแปล วิธีติดตั้ง หรือเวอร์ชัน..." required></textarea>
           </div>
           <div class="form-group">
-            <label for="modUrlInput">ลิงก์ดาวน์โหลด</label>
+            <label for="modUrlInput" data-i18n="downloadUrl">ลิงก์ดาวน์โหลด</label>
             <input type="url" id="modUrlInput" placeholder="https://..." required />
           </div>
           <div class="form-group">
-            <label for="modImageUrlInput">ลิงก์รูปภาพมอด (URL)</label>
+            <label for="modImageUrlInput" data-i18n="imageUrl">ลิงก์รูปภาพมอด (URL)</label>
             <input type="url" id="modImageUrlInput" placeholder="https://..." />
           </div>
           <div class="form-group">
-            <label for="modImageFileInput">หรืออัปโหลดรูปภาพจากเครื่อง</label>
+            <label for="modImageFileInput" data-i18n="uploadImage">หรืออัปโหลดรูปภาพจากเครื่อง</label>
             <input type="file" id="modImageFileInput" accept="image/*" />
           </div>
           <img id="modImagePreview" src="" alt="ตัวอย่างรูปมอด" class="mod-preview-img hidden" />
-          <button type="submit" class="btn btn-primary">บันทึกมอด</button>
+          <button type="submit" class="btn btn-primary" data-i18n="saveMod">บันทึกมอด</button>
         </form>
 
-        <form id="cosmeticForm" class="card-box">
-          <h3>เพิ่มของตกแต่ง (แยกปลดล็อกด้วยคะแนน vs EXP)</h3>
+        <form id="cosmeticForm" class="card-box admin-only-block">
+          <h3 data-i18n="addCosmetic">เพิ่มของตกแต่ง (แยกปลดล็อกด้วยคะแนน vs EXP)</h3>
           <div class="form-group">
-            <label for="cosmeticTypeInput">ประเภท</label>
+            <label for="cosmeticTypeInput" data-i18n="type">ประเภท</label>
             <select id="cosmeticTypeInput">
               <option value="title">ฉายา (Title)</option>
               <option value="frame">กรอบรูป (Frame)</option>
@@ -155,18 +189,18 @@
               <input type="number" id="cosmeticReqExp" min="0" value="0" />
             </div>
           </div>
-          <button type="submit" class="btn btn-primary">เพิ่มของตกแต่ง</button>
+          <button type="submit" class="btn btn-primary" data-i18n="addCosmeticBtn">เพิ่มของตกแต่ง</button>
         </form>
       </div>
 
-      <div class="admin-subgrid">
+      <div id="adminSubgrid" class="admin-subgrid admin-only-block">
         <div class="admin-box">
-          <strong>จัดการสมาชิก (แสดง UserID) / ให้คะแนน & EXP แบบกำหนดเอง</strong>
+          <strong>จัดการสมาชิก / สิทธิ์ VIP & ลงมอด / ผูก OAuth ID / ให้คะแนน & EXP / ลบบัญชี</strong>
           <div id="adminUserList"></div>
         </div>
         <div class="admin-box">
-          <strong>รายการคำขอมอดแปลไทยจากสมาชิก</strong>
-          <div id="adminRequestList"></div>
+          <strong>ตรวจสอบหลักฐานการโดเนทจากสมาชิก</strong>
+          <div id="adminDonateList"></div>
         </div>
       </div>
     </section>
@@ -175,15 +209,15 @@
       <aside class="sidebar left-sidebar">
         <div class="side-card">
           <div class="side-title">
-            <span>Rank ผู้ใช้ที่ EXP สูงสุด</span>
-            <span class="muted small-text">เรียงตาม EXP</span>
+            <span data-i18n="topExpRank">Rank ผู้ใช้ที่ EXP สูงสุด</span>
+            <span class="muted small-text" data-i18n="membersOnly">เฉพาะสมาชิก</span>
           </div>
           <div id="userRankList" class="rank-list"></div>
         </div>
 
         <div class="side-card">
           <div class="side-title">
-            <span>ทำเนียบยศ 7 ระดับ</span>
+            <span data-i18n="rankTiers">ทำเนียบยศ 7 ระดับ</span>
           </div>
           <div id="rankTiersList" class="rank-tier-list"></div>
         </div>
@@ -201,8 +235,8 @@
 
       <aside class="sidebar right-sidebar">
         <div class="side-card">
-          <h3>กิจกรรม & ของตกแต่ง</h3>
-          <p class="muted small-text">ปลดล็อกของตกแต่งได้ทั้งจาก <strong>คะแนน</strong> และ <strong>EXP</strong> แยกเงื่อนไขกันชัดเจน</p>
+          <h3 data-i18n="eventsAndCosmetics">กิจกรรม & ของตกแต่ง</h3>
+          <p class="muted small-text" data-i18n="cosmeticHint">ปลดล็อกของตกแต่งได้ทั้งจาก <strong>คะแนน</strong> และ <strong>EXP</strong> แยกเงื่อนไขกันชัดเจน</p>
           <div id="cosmeticShopList" class="cosmetic-list"></div>
         </div>
       </aside>
@@ -213,21 +247,31 @@
   <div id="authModal" class="modal hidden" aria-hidden="true">
     <div class="modal-content">
       <div class="modal-head">
-        <h3>เข้าสู่ระบบ / สมัครสมาชิก</h3>
+        <h3 data-i18n="loginTitle">เข้าสู่ระบบสมาชิก</h3>
         <button type="button" id="closeAuthModalBtn" class="btn-close">✕</button>
       </div>
 
       <div class="social-login-section">
-        <div class="muted small-text">เข้าสู่ระบบด่วนผ่านบัญชีโซเชียล</div>
+        <div class="muted small-text">เลือกผู้ให้บริการและกรอก ID บัญชีจริงที่ผูกไว้ในระบบ</div>
         <div class="social-login-grid">
           <button type="button" class="btn social-btn social-google" data-social-provider="Google">Google</button>
           <button type="button" class="btn social-btn social-facebook" data-social-provider="Facebook">Facebook</button>
           <button type="button" class="btn social-btn social-discord" data-social-provider="Discord">Discord</button>
           <button type="button" class="btn social-btn social-twitter" data-social-provider="Twitter">Twitter</button>
         </div>
+        <div id="socialIdFormBox" class="card-box hidden">
+          <div class="form-group">
+            <label id="socialIdLabel" for="socialAccountIdInput">กรอก ID บัญชีจริง</label>
+            <input type="text" id="socialAccountIdInput" placeholder="เช่น google-player1-001" />
+          </div>
+          <div class="header-right-actions">
+            <button type="button" id="confirmSocialLoginBtn" class="btn btn-primary">ยืนยัน ID และเข้าสู่ระบบ</button>
+            <button type="button" id="cancelSocialLoginBtn" class="btn btn-soft">ยกเลิก</button>
+          </div>
+        </div>
       </div>
 
-      <div class="auth-divider"><span>หรือเข้าสู่ระบบด้วยบัญชีสมาชิก</span></div>
+      <div class="auth-divider"><span>หรือเข้าสู่ระบบด้วยชื่อผู้ใช้และรหัสผ่าน</span></div>
 
       <form id="authForm">
         <div class="form-group">
@@ -247,13 +291,13 @@
   <div id="recoverModal" class="modal hidden" aria-hidden="true">
     <div class="modal-content">
       <div class="modal-head">
-        <h3>กู้คืนบัญชีผู้ใช้</h3>
+        <h3 data-i18n="recoverTitle">กู้คืนบัญชีผู้ใช้</h3>
         <button type="button" id="closeRecoverModalBtn" class="btn-close">✕</button>
       </div>
       <form id="recoverForm">
         <div class="form-group">
           <label for="recoverIdentifierInput">กรอก UserID หรือ ชื่อผู้ใช้ (Username)</label>
-          <input type="text" id="recoverIdentifierInput" placeholder="เช่น u-admin หรือ player1" required />
+          <input type="text" id="recoverIdentifierInput" placeholder="เช่น player1" required />
         </div>
         <div class="form-group">
           <label for="recoverNewPassInput">ตั้งรหัสผ่านใหม่</label>
@@ -264,23 +308,78 @@
     </div>
   </div>
 
-  <!-- Modal ขอมอดแปลไทย -->
+  <!-- Modal ขอมอดแปลไทยเกมต่อไป (รายชื่อสาธารณะ แยกปกติ / 18+) -->
   <div id="requestModal" class="modal hidden" aria-hidden="true">
-    <div class="modal-content">
+    <div class="modal-content modal-wide">
       <div class="modal-head">
-        <h3>ขอมอดแปลไทยเกมต่อไป</h3>
+        <h3 data-i18n="requestListTitle">รายชื่อเกมที่ขอแปลไทย (แยกปกติ / 18+)</h3>
         <button type="button" id="closeRequestModalBtn" class="btn-close">✕</button>
       </div>
-      <form id="requestForm">
+
+      <div class="mode-and-actions">
+        <div class="content-mode-switch">
+          <button type="button" id="reqTabNormalBtn" class="btn mode-btn active" data-req-tab="normal">รายชื่อเกมปกติ</button>
+          <button type="button" id="reqTabAdultBtn" class="btn mode-btn adult" data-req-tab="18+">รายชื่อเกม 18+</button>
+        </div>
+        <button type="button" id="toggleNewRequestFormBtn" class="btn btn-vip">+ ส่งคำขอมอดใหม่</button>
+      </div>
+
+      <form id="requestForm" class="card-box hidden">
         <div class="form-group">
           <label for="requestGameInput">ชื่อเกมที่อยากให้แปลไทย</label>
           <input type="text" id="requestGameInput" required />
         </div>
         <div class="form-group">
-          <label for="requestNoteInput">รายละเอียดเพิ่มเติม</label>
-          <textarea id="requestNoteInput" rows="3"></textarea>
+          <label for="requestRatingInput">หมวดหมู่เนื้อหาเกม</label>
+          <select id="requestRatingInput">
+            <option value="normal">เกมปกติ</option>
+            <option value="18+">เกม 18+</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="requestNoteInput">รายละเอียดเพิ่มเติม (บัญชี VIP จะแจ้งเตือนแอดมินทันที)</label>
+          <textarea id="requestNoteInput" rows="2"></textarea>
         </div>
         <button type="submit" class="btn btn-vip">ส่งคำขอมอด</button>
+      </form>
+
+      <div id="publicRequestList" class="request-public-list"></div>
+    </div>
+  </div>
+
+  <!-- Modal โดเนท & ส่งหลักฐาน -->
+  <div id="donateModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3 data-i18n="donateTitle">โดเนทสนับสนุน & ส่งหลักฐาน</h3>
+        <button type="button" id="closeDonateModalBtn" class="btn-close">✕</button>
+      </div>
+      <div class="card-box donate-info-card">
+        <p class="small-text">สนับสนุนค่าเซิร์ฟเวอร์และทีมแปลมอด พร้อมส่งสลิปหลักฐานให้ผู้ดูแลระบบตรวจสอบเพื่อรับป้าย <strong>VIP</strong></p>
+      </div>
+      <form id="donateForm">
+        <div class="form-group">
+          <label for="donateSenderInput">ชื่อผู้โดเนท (หรือ UserID)</label>
+          <input type="text" id="donateSenderInput" placeholder="เช่น player1" required />
+        </div>
+        <div class="form-group">
+          <label for="donateAmountInput">จำนวนเงินที่โดเนท (บาท)</label>
+          <input type="number" id="donateAmountInput" min="1" placeholder="เช่น 100" required />
+        </div>
+        <div class="form-group">
+          <label for="donateSlipUrlInput">ลิงก์รูปสลิปหลักฐาน (URL)</label>
+          <input type="url" id="donateSlipUrlInput" placeholder="https://..." />
+        </div>
+        <div class="form-group">
+          <label for="donateSlipFileInput">หรืออัปโหลดรูปสลิปจากเครื่อง</label>
+          <input type="file" id="donateSlipFileInput" accept="image/*" />
+        </div>
+        <img id="donateSlipPreview" src="" alt="ตัวอย่างสลิป" class="mod-preview-img hidden" />
+        <div class="form-group">
+          <label for="donateNoteInput">ข้อความถึงผู้ดูแลระบบ</label>
+          <textarea id="donateNoteInput" rows="2" placeholder="เวลาโอน หรือเกมที่อยากสนับสนุน..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-donate">ส่งหลักฐานการโดเนท</button>
       </form>
     </div>
   </div>
