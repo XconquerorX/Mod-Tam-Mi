@@ -9,7 +9,7 @@
   <meta name="keywords" content="มอดแปลไทย, มอดเกมแปลไทย, แจกมอดภาษาไทย, Thai Mod Hub, โหลดมอดแปลไทย, Stardew Valley แปลไทย, Project Zomboid แปลไทย" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://xconquerorx.github.io/Mod-Tam-Mi/" />
-  <meta name="google-site-verification" content="rxh_BEmrxqbp4KW6kVt7iecRztrvOXPbIbHPFUIjPNU" />
+  <meta name="google-site-verification" content="ใส่รหัสยืนยันตัวตนจาก_Google_Search_Console_ตรงนี้" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -29,6 +29,7 @@
           <button type="button" id="openRequestBtn" class="nav-item nav-vip" data-i18n="requestMod">ขอมอดแปลไทยเกมต่อไป</button>
           <a href="forum.html" target="_blank" rel="noopener noreferrer" class="nav-item" data-i18n="openForum">กระดานพูดคุย</a>
           <button type="button" id="openDonateBtn" class="nav-item nav-donate" data-i18n="donate">โดเนทสนับสนุน</button>
+          <button type="button" id="openRankTiersBtn" class="nav-item" data-i18n="rankTiersBtn">ทำเนียบยศ & เงื่อนไข</button>
         </div>
       </div>
 
@@ -45,7 +46,7 @@
         <!-- ส่วนผู้ใช้เมื่อยังไม่ล็อกอิน -->
         <div id="guestProfileBox" class="nav-auth-group">
           <img id="guestAvatarImg" src="" alt="Guest" class="hidden" />
-          <button type="button" id="openRecoverBtn" class="btn btn-ghost btn-sm" data-i18n="recover">กู้คืนบัญชี</button>
+          <button type="button" id="openRecoverBtn" class="btn btn-ghost btn-sm hidden" data-i18n="recover">กู้คืนบัญชี</button>
           <button type="button" id="authBtn" class="btn btn-primary btn-sm" data-i18n="login">เข้าสู่ระบบ</button>
         </div>
 
@@ -89,7 +90,7 @@
       </div>
     </div>
 
-    <!-- กล่องแจ้งเตือน (ซ่อนไว้จนกว่าจะกด) -->
+    <!-- กล่องแจ้งเตือน -->
     <section id="publicNotifPanel" class="floating-panel hidden">
       <div class="panel-head">
         <h3 data-i18n="publicNotifTitle">กล่องแจ้งเตือนสำหรับทุกคน</h3>
@@ -223,7 +224,7 @@
       </div>
     </div>
 
-    <!-- เลย์เอาต์ 2 คอลัมน์กว้างเต็มตา (พื้นที่มอดกว้าง 75% + แถบข้างขวา 25%) -->
+    <!-- เลย์เอาต์ 2 คอลัมน์กว้างเต็มตา -->
     <div class="workspace-grid">
       <main class="main-mod-area">
         <div id="modList" class="mod-grid"></div>
@@ -246,13 +247,21 @@
           <div id="userRankList" class="rank-list"></div>
         </div>
 
-        <div class="side-card">
-          <div class="side-title">
-            <span data-i18n="rankTiers">ทำเนียบยศ 7 ระดับ</span>
-          </div>
-          <div id="rankTiersList" class="rank-tier-list"></div>
-        </div>
+        <!-- ซ่อนไว้ค้างไว้เพื่อให้ DOM รองรับ แต่ย้ายไปแสดงใน Modal ทำเนียบยศ -->
+        <div id="rankTiersList" class="hidden"></div>
       </aside>
+    </div>
+  </div>
+
+  <!-- Modal ทำเนียบยศ 7 ระดับ & เงื่อนไข EXP -->
+  <div id="rankTiersModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3 data-i18n="rankTiersTitle">ทำเนียบยศ 7 ระดับ & เงื่อนไข EXP</h3>
+        <button type="button" id="closeRankTiersModalBtn" class="btn-close">✕</button>
+      </div>
+      <p class="muted small-text">สะสม EXP จากการร่วมกิจกรรมและรับสิทธิ์จากผู้ดูแลระบบเพื่อเลื่อนขั้นยศตามเงื่อนไขด้านล่าง:</p>
+      <div id="rankTiersModalList" class="rank-tier-list"></div>
     </div>
   </div>
 
@@ -300,7 +309,7 @@
     </div>
   </div>
 
-  <!-- Modal กู้คืนบัญชี -->
+  <!-- Modal กู้คืนบัญชี (ซ่อนไว้ตามคำขอ) -->
   <div id="recoverModal" class="modal hidden" aria-hidden="true">
     <div class="modal-content">
       <div class="modal-head">
@@ -432,7 +441,6 @@
 
   <script src="app.js"></script>
   <script>
-    // เชื่อมปุ่ม "ออก" ในแถบโปรไฟล์ด้านบนให้ทำงานเหมือนปุ่มออกจากระบบ
     document.getElementById("logoutQuickBtn")?.addEventListener("click", () => {
       document.getElementById("authBtn")?.click();
     });

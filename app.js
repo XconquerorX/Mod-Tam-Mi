@@ -1,627 +1,4 @@
-const STORAGE_KEY = "thai_mod_hub_state_v2";
-const API_BASE_URL = "";
-
-const I18N = {
-  th: {
-    login: "เข้าสู่ระบบ",
-    recover: "กู้คืนบัญชี",
-    requestMod: "ขอมอดแปลไทยเกมต่อไป",
-    donate: "โดเนท",
-    openForum: "เปิดหน้ากระทู้",
-    adminRole: "ผู้ดูแลระบบ (Admin)",
-    uploadPerm: "สิทธิ์ลงมอด",
-    siteSubtitle: "รวมมอดเกมแปลไทย อ่านง่าย ใช้งานสะดวก ดาวน์โหลดฟรี",
-    guestProfile: "โปรไฟล์ผู้เยี่ยมชม",
-    guestHint: "ล็อกอินเพื่อรับ UserID สะสมคะแนน/EXP ปลดล็อกยศ และของตกแต่ง",
-    points: "คะแนน",
-    customizeProfile: "แต่งโปรไฟล์",
-    cmsPanelBtn: "แผงแอดมิน (CMS)",
-    normalMod: "มอดเกมปกติ",
-    adultMod: "มอดเกม 18+",
-    notifications: "แจ้งเตือน",
-    adminAlerts: "แจ้งเตือนแอดมิน",
-    localMode: "โหมด LocalStorage",
-    backendConnected: "เชื่อมต่อ Backend แล้ว",
-    exportData: "Export ข้อมูล",
-    reportBug: "แจ้งบัค",
-    publicNotifTitle: "กล่องแจ้งเตือนสำหรับทุกคน",
-    adminNotifTitle: "กล่องแจ้งเตือนผู้ดูแลระบบ (VIP ขอมอด & แจ้งโดเนท)",
-    sendNotif: "ส่งแจ้งเตือน",
-    clearRead: "ล้างที่อ่านแล้ว",
-    addNewMod: "เพิ่ม / ลงมอดแปลไทยใหม่",
-    modName: "ชื่อมอด / ชื่อเกม",
-    category: "หมวดหมู่",
-    contentRating: "โหมดเนื้อหา",
-    modDesc: "รายละเอียดมอด",
-    downloadUrl: "ลิงก์ดาวน์โหลด",
-    imageUrl: "ลิงก์รูปภาพมอด (URL)",
-    uploadImage: "หรืออัปโหลดรูปภาพจากเครื่อง",
-    saveMod: "บันทึกมอด",
-    addCosmetic: "เพิ่มของตกแต่ง (แยกปลดล็อกด้วยคะแนน vs EXP)",
-    type: "ประเภท",
-    addCosmeticBtn: "เพิ่มของตกแต่ง",
-    topExpRank: "Rank ผู้ใช้ที่ EXP สูงสุด",
-    membersOnly: "เฉพาะสมาชิก",
-    rankTiers: "ทำเนียบยศ 7 ระดับ",
-    eventsAndCosmetics: "กิจกรรม & ของตกแต่ง",
-    cosmeticHint: "ปลดล็อกของตกแต่งได้ทั้งจาก คะแนน และ EXP แยกเงื่อนไขกันชัดเจน",
-    loginTitle: "เข้าสู่ระบบสมาชิก",
-    recoverTitle: "กู้คืนบัญชีผู้ใช้",
-    requestListTitle: "รายชื่อเกมที่ขอแปลไทย (แยกปกติ / 18+)",
-    donateTitle: "โดเนทสนับสนุน & ส่งหลักฐาน",
-    backHome: "← กลับหน้าหลักมอด",
-    forumTitle: "กระดานพูดคุย & สอบถาม",
-    forumSub: "แยกหน้าพูดคุยสอบถาม วิธีลงมอด และแลกเปลี่ยนข้อมูลสมาชิก",
-    allThreads: "รายการกระทู้ทั้งหมด",
-    threadHint: "ตั้งกระทู้ใหม่หรือพิมพ์ตอบกลับได้ทันที",
-    newThread: "+ ตั้งกระทู้ใหม่",
-    threadTopic: "หัวข้อกระทู้",
-    threadDetail: "รายละเอียด",
-    postThread: "โพสต์กระทู้"
-  },
-  en: {
-    login: "Login",
-    recover: "Recover Account",
-    requestMod: "Request Thai Mod",
-    donate: "Donate",
-    openForum: "Open Forum",
-    adminRole: "Administrator",
-    uploadPerm: "Mod Uploader",
-    siteSubtitle: "Thai Game Translation Mod Hub — Easy to read, convenient, free download",
-    guestProfile: "Guest Profile",
-    guestHint: "Login to get a UserID, earn Points/EXP, and unlock ranks & cosmetics",
-    points: "Points",
-    customizeProfile: "Customize Profile",
-    cmsPanelBtn: "Admin Panel (CMS)",
-    normalMod: "Normal Mods",
-    adultMod: "18+ Mods",
-    notifications: "Notifications",
-    adminAlerts: "Admin Alerts",
-    localMode: "LocalStorage Mode",
-    backendConnected: "Backend Connected",
-    exportData: "Export Data",
-    reportBug: "Report Bug",
-    publicNotifTitle: "Public Notifications (Everyone)",
-    adminNotifTitle: "Admin Alerts (VIP Mod Requests & Donations)",
-    sendNotif: "Send Alert",
-    clearRead: "Clear All",
-    addNewMod: "Add / Publish New Thai Mod",
-    modName: "Mod / Game Title",
-    category: "Category",
-    contentRating: "Content Rating",
-    modDesc: "Mod Description",
-    downloadUrl: "Download URL",
-    imageUrl: "Mod Image URL",
-    uploadImage: "Or Upload Image from Device",
-    saveMod: "Save Mod",
-    addCosmetic: "Add Cosmetic (Separate Points vs EXP Unlock)",
-    type: "Type",
-    addCosmeticBtn: "Add Cosmetic",
-    topExpRank: "Top EXP User Ranking",
-    membersOnly: "Members Only",
-    rankTiers: "7 Rank Tiers",
-    eventsAndCosmetics: "Events & Cosmetics",
-    cosmeticHint: "Unlock cosmetics separately with Points or EXP",
-    loginTitle: "Member Login",
-    recoverTitle: "Account Recovery",
-    requestListTitle: "Requested Thai Translation Games (Normal / 18+)",
-    donateTitle: "Donate & Submit Proof",
-    backHome: "← Back to Mod Hub",
-    forumTitle: "Discussion & Q&A Forum",
-    forumSub: "Dedicated board for mod installation help and community chat",
-    allThreads: "All Forum Threads",
-    threadHint: "Create a new thread or reply anytime",
-    newThread: "+ New Thread",
-    threadTopic: "Thread Title",
-    threadDetail: "Details",
-    postThread: "Post Thread"
-  }
-};
-
-const RANK_LEVELS = [
-  { minExp: 0, name: "ระดับ 1: มือใหม่หัดลงมอด" },
-  { minExp: 100, name: "ระดับ 2: นักสำรวจมอด" },
-  { minExp: 300, name: "ระดับ 3: ผู้ช่วยแปลท้องถิ่น" },
-  { minExp: 600, name: "ระดับ 4: นักผจญภัยสายมอด" },
-  { minExp: 1000, name: "ระดับ 5: ผู้เชี่ยวชาญมอดไทย" },
-  { minExp: 1600, name: "ระดับ 6: ปรมาจารย์สายมอด" },
-  { minExp: 2500, name: "ระดับ 7: ตำนานแห่ง Thai Mod Hub" }
-];
-
-const DEFAULT_AVATAR =
-  "data:image/svg+xml;utf8," +
-  encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect width="80" height="80" rx="40" fill="#0d9488"/><circle cx="40" cy="30" r="14" fill="#ffffff"/><path d="M16 68c4-14 15-20 24-20s20 6 24 20" fill="#ffffff"/></svg>`
-  );
-
-const DEFAULT_STATE = {
-  lang: "th",
-  settings: {
-    siteTitle: "Thai Mod Hub",
-    siteSubtitle: "รวมมอดเกมแปลไทย อ่านง่าย ใช้งานสะดวก ดาวน์โหลดฟรี",
-    announcement: "ยินดีต้อนรับสู่ Thai Mod Hub — รองรับสลับภาษา TH/EN โดเนทรับ VIP และดูรายชื่อเกมที่ขอแปลได้"
-  },
-  contentMode: "normal",
-  requestTabMode: "normal",
-  currentUserId: null,
-  users: [
-    {
-      id: "u-admin",
-      username: "admin",
-      password: "123",
-      role: "admin",
-      isVip: true,
-      canUploadMod: true,
-      provider: "local",
-      socialIds: {
-        google: "google-admin-001",
-        facebook: "fb-admin-001",
-        discord: "100000000000000001",
-        twitter: "@admin_modhub"
-      },
-      points: 999,
-      exp: 2600,
-      avatarSrc: DEFAULT_AVATAR,
-      frameId: "frame-gold",
-      titleLabel: "ผู้ดูแลระบบ",
-      unlockedAvatars: [DEFAULT_AVATAR],
-      unlockedFrames: ["frame-none", "frame-gold", "frame-neon"],
-      unlockedTitles: ["นักผจญภัยหน้าใหม่", "ผู้ดูแลระบบ"]
-    },
-    {
-      id: "u-member1",
-      username: "player1",
-      password: "123",
-      role: "member",
-      isVip: true,
-      canUploadMod: true,
-      provider: "local",
-      socialIds: {
-        google: "google-player1-001",
-        facebook: "",
-        discord: "100000000000000002",
-        twitter: ""
-      },
-      points: 120,
-      exp: 350,
-      avatarSrc: DEFAULT_AVATAR,
-      frameId: "frame-none",
-      titleLabel: "ผู้สนับสนุน VIP",
-      unlockedAvatars: [DEFAULT_AVATAR],
-      unlockedFrames: ["frame-none"],
-      unlockedTitles: ["นักผจญภัยหน้าใหม่", "ผู้สนับสนุน VIP"]
-    }
-  ],
-  cosmetics: [
-    { id: "c-title-1", type: "title", value: "นักผจญภัยสายมอด", unlockPoints: 50, unlockExp: 0 },
-    { id: "c-title-2", type: "title", value: "ผู้เชี่ยวชาญมอดไทย", unlockPoints: 0, unlockExp: 500 },
-    { id: "c-frame-1", type: "frame", value: "frame-neon", unlockPoints: 100, unlockExp: 0 },
-    { id: "c-frame-2", type: "frame", value: "frame-gold", unlockPoints: 0, unlockExp: 1000 }
-  ],
-  mods: [
-    {
-      id: "m-1",
-      title: "Stardew Valley — แพตช์แปลไทย",
-      category: "Simulation",
-      rating: "normal",
-      description: "แปลเมนู เควส และบทสนทนาหลักให้อ่านง่าย พร้อมฟอนต์ภาษาไทย",
-      url: "https://example.com/stardew-th",
-      image: "",
-      downloads: 0
-    },
-    {
-      id: "m-2",
-      title: "Project Zomboid — มอดแปลไทย (Build 42)",
-      category: "Survival",
-      rating: "normal",
-      description: "แปลไอเทม อาชีพ และคำอธิบายสกิลให้เข้าใจง่ายสำหรับผู้เล่นใหม่",
-      url: "https://example.com/pz-th",
-      image: "",
-      downloads: 0
-    },
-    {
-      id: "m-3",
-      title: "ตัวอย่างมอดโหมด 18+",
-      category: "RPG",
-      rating: "18+",
-      description: "รายการตัวอย่างสำหรับทดสอบการสลับโหมดมอดเกมปกติและเกม 18+",
-      url: "https://example.com/adult-mod-demo",
-      image: "",
-      downloads: 0
-    }
-  ],
-  requests: [
-    {
-      id: "req-demo-1",
-      game: "Baldur's Gate 3 (อัปเดตแพตช์ล่าสุด)",
-      rating: "normal",
-      note: "อยากให้ช่วยแปลส่วนเควสเสริมเพิ่มเติมครับ",
-      by: "player1 (u-member1)",
-      isVipRequest: true,
-      votes: 3,
-      createdAt: new Date().toLocaleString("th-TH")
-    }
-  ],
-  donations: [],
-  publicNotifications: [
-    {
-      id: "pn-1",
-      text: "เปิดระบบขอเกมแปลไทยแบบสาธารณะแล้ว สามารถกดเข้าไปดูรายชื่อและโหวตเกมที่อยากให้แปลได้เลย!",
-      createdAt: new Date().toLocaleString("th-TH")
-    }
-  ],
-  adminNotifications: [],
-  bugReports: [],
-  threads: [
-    {
-      id: "thread-welcome",
-      title: "กระดานพูดคุย & สอบถามการลงมอดแปลไทย",
-      body: "ติดปัญหาลงมอดเกมไหน หรืออยากแนะนำมอดแปลไทย พิมพ์คุยกันตรงนี้ได้เลยครับ",
-      author: "Admin",
-      authorId: "u-admin",
-      createdAt: new Date().toLocaleString("th-TH"),
-      replies: []
-    }
-  ]
-};
-
-let uploadedModImageDataUrl = "";
-let uploadedDonateSlipDataUrl = "";
-let backendOnline = false;
-let selectedSocialProvider = null;
-
-function normalizeUser(u) {
-  return {
-    id: u.id || "u-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
-    username: u.username,
-    password: u.password || "",
-    role: u.role || "member",
-    isVip: Boolean(u.isVip),
-    canUploadMod: Boolean(u.canUploadMod),
-    provider: u.provider || "local",
-    socialIds: {
-      google: u.socialIds?.google || "",
-      facebook: u.socialIds?.facebook || "",
-      discord: u.socialIds?.discord || "",
-      twitter: u.socialIds?.twitter || ""
-    },
-    points: Number(u.points || 0),
-    exp: Number(u.exp || 0),
-    avatarSrc: u.avatarSrc || DEFAULT_AVATAR,
-    frameId: u.frameId || "frame-none",
-    titleLabel: u.titleLabel || "นักผจญภัยหน้าใหม่",
-    unlockedAvatars: Array.isArray(u.unlockedAvatars) && u.unlockedAvatars.length ? u.unlockedAvatars : [DEFAULT_AVATAR],
-    unlockedFrames: Array.isArray(u.unlockedFrames) && u.unlockedFrames.length ? u.unlockedFrames : ["frame-none"],
-    unlockedTitles: Array.isArray(u.unlockedTitles) && u.unlockedTitles.length ? u.unlockedTitles : ["นักผจญภัยหน้าใหม่"]
-  };
-}
-
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return structuredClone(DEFAULT_STATE);
-    const parsed = JSON.parse(raw);
-    return {
-      lang: parsed.lang === "en" ? "en" : "th",
-      settings: { ...DEFAULT_STATE.settings, ...(parsed.settings || {}) },
-      contentMode: parsed.contentMode === "18+" ? "18+" : "normal",
-      requestTabMode: parsed.requestTabMode === "18+" ? "18+" : "normal",
-      currentUserId: parsed.currentUserId || null,
-      users: Array.isArray(parsed.users) && parsed.users.length ? parsed.users.map(normalizeUser) : structuredClone(DEFAULT_STATE.users),
-      cosmetics: Array.isArray(parsed.cosmetics) ? parsed.cosmetics : structuredClone(DEFAULT_STATE.cosmetics),
-      mods: Array.isArray(parsed.mods) ? parsed.mods : structuredClone(DEFAULT_STATE.mods),
-      requests: Array.isArray(parsed.requests) ? parsed.requests : structuredClone(DEFAULT_STATE.requests),
-      donations: Array.isArray(parsed.donations) ? parsed.donations : [],
-      publicNotifications: Array.isArray(parsed.publicNotifications) ? parsed.publicNotifications : structuredClone(DEFAULT_STATE.publicNotifications),
-      adminNotifications: Array.isArray(parsed.adminNotifications) ? parsed.adminNotifications : [],
-      bugReports: Array.isArray(parsed.bugReports) ? parsed.bugReports : [],
-      threads: Array.isArray(parsed.threads) ? parsed.threads : structuredClone(DEFAULT_STATE.threads)
-    };
-  } catch {
-    return structuredClone(DEFAULT_STATE);
-  }
-}
-
-let state = loadState();
-
-function applyLanguage() {
-  const dict = I18N[state.lang] || I18N.th;
-  document.documentElement.lang = state.lang;
-  document.querySelectorAll("[data-i18n]").forEach((el) => {
-    const key = el.getAttribute("data-i18n");
-    if (dict[key]) el.textContent = dict[key];
-  });
-  const langBtn = document.getElementById("langToggleBtn");
-  if (langBtn) langBtn.textContent = state.lang === "th" ? "EN / ไทย" : "ไทย / EN";
-  const statusBadge = document.getElementById("backendStatusBadge");
-  if (statusBadge) {
-    statusBadge.textContent = backendOnline ? dict.backendConnected : dict.localMode;
-  }
-}
-
-async function syncStateToBackend() {
-  if (!backendOnline) return;
-  try {
-    await fetch(`${API_BASE_URL}/api/state`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(state)
-    });
-  } catch {
-    backendOnline = false;
-  }
-}
-
-async function checkBackendConnection() {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/health`);
-    if (!res.ok) return;
-    backendOnline = true;
-    applyLanguage();
-    const remoteStateRes = await fetch(`${API_BASE_URL}/api/state`);
-    if (remoteStateRes.ok) {
-      const remote = await remoteStateRes.json();
-      if (Array.isArray(remote.users) && remote.users.length) {
-        state.users = remote.users.map(normalizeUser);
-      }
-      if (Array.isArray(remote.donations)) state.donations = remote.donations;
-      if (Array.isArray(remote.adminNotifications)) state.adminNotifications = remote.adminNotifications;
-      if (Array.isArray(remote.publicNotifications) && remote.publicNotifications.length) {
-        state.publicNotifications = remote.publicNotifications;
-      }
-      saveState(false);
-      renderAll();
-    }
-  } catch {
-    backendOnline = false;
-  }
-}
-
-function saveState(shouldSync = true) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  if (shouldSync) syncStateToBackend();
-}
-
-function getCurrentUser() {
-  return state.users.find((u) => u.id === state.currentUserId) || null;
-}
-
-function canUserUploadMod(user) {
-  if (!user) return false;
-  return user.role === "admin" || Boolean(user.canUploadMod);
-}
-
-function getRankByExp(exp) {
-  let current = RANK_LEVELS[0];
-  for (const r of RANK_LEVELS) {
-    if ((Number(exp) || 0) >= r.minExp) current = r;
-  }
-  return current;
-}
-
-function canUnlockCosmetic(item, user) {
-  const reqPoints = Number(item.unlockPoints || 0);
-  const reqExp = Number(item.unlockExp || 0);
-  const userPoints = Number(user?.points || 0);
-  const userExp = Number(user?.exp || 0);
-  if (reqPoints === 0 && reqExp === 0) return true;
-  return (reqPoints > 0 && userPoints >= reqPoints) || (reqExp > 0 && userExp >= reqExp);
-}
-
-function formatUnlockRequirement(item) {
-  const reqPoints = Number(item.unlockPoints || 0);
-  const reqExp = Number(item.unlockExp || 0);
-  const parts = [];
-  if (reqPoints > 0) parts.push(`คะแนน ${reqPoints} แต้ม`);
-  if (reqExp > 0) parts.push(`EXP ${reqExp}`);
-  return parts.length ? `ปลดล็อกด้วย: ${parts.join(" หรือ ")}` : "ปลดล็อกฟรี";
-}
-
-function pushAdminAlert(type, message) {
-  state.adminNotifications.unshift({
-    id: "adm-notif-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
-    type,
-    message,
-    createdAt: new Date().toLocaleString("th-TH")
-  });
-}
-
-function renderThreads() {
-  const listEl = document.getElementById("threadList");
-  if (!listEl) return;
-  if (!state.threads.length) {
-    listEl.innerHTML = "<p class='muted'>ยังไม่มีกระทู้ เริ่มตั้งกระทู้แรกได้เลย</p>";
-    return;
-  }
-  listEl.innerHTML = state.threads
-    .map(
-      (t) => `
-      <article class="thread-card">
-        <h3>${t.title}</h3>
-        <div class="muted small-text">โดย ${t.author} ${t.authorId ? `(UserID: ${t.authorId})` : ""} · ${t.createdAt}</div>
-        <p>${t.body}</p>
-        <div>
-          ${(t.replies || [])
-            .map((r) => `<div class="reply-item"><strong>${r.author}:</strong> ${r.text} <span class="muted small-text">(${r.createdAt})</span></div>`)
-            .join("")}
-        </div>
-        <form class="reply-form" data-thread-id="${t.id}">
-          <input type="text" class="reply-input" placeholder="พิมพ์ข้อความตอบกลับ..." required />
-          <button type="submit" class="btn btn-primary">ตอบกลับ</button>
-        </form>
-      </article>`
-    )
-    .join("");
-}
-
-function initForumPage() {
-  const badge = document.getElementById("forumUserBadge");
-  const user = getCurrentUser();
-  if (badge) {
-    badge.innerHTML = user
-      ? `ผู้ใช้: <strong>${user.username}</strong> <span class="userid-badge">ID: ${user.id}</span>`
-      : `กำลังใช้งานในฐานะผู้เยี่ยมชม · <a href="index.html">ไปหน้าล็อกอิน</a>`;
-  }
-  document.getElementById("langToggleBtn")?.addEventListener("click", () => {
-    state.lang = state.lang === "th" ? "en" : "th";
-    saveState(false);
-    applyLanguage();
-  });
-  document.getElementById("toggleNewThreadBtn")?.addEventListener("click", () => {
-    document.getElementById("newThreadForm")?.classList.toggle("hidden");
-  });
-  document.getElementById("newThreadForm")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const title = document.getElementById("threadTitleInput")?.value.trim();
-    const body = document.getElementById("threadBodyInput")?.value.trim();
-    if (!title || !body) return;
-    const u = getCurrentUser();
-    state.threads.unshift({
-      id: "th-" + Date.now(),
-      title,
-      body,
-      author: u ? u.username : "สมาชิก",
-      authorId: u ? u.id : "guest",
-      createdAt: new Date().toLocaleString("th-TH"),
-      replies: []
-    });
-    saveState();
-    e.target.reset();
-    e.target.classList.add("hidden");
-    renderThreads();
-  });
-  document.getElementById("threadList")?.addEventListener("submit", (e) => {
-    const form = e.target.closest(".reply-form");
-    if (!form) return;
-    e.preventDefault();
-    const text = form.querySelector(".reply-input")?.value.trim();
-    if (!text) return;
-    const u = getCurrentUser();
-    const thread = state.threads.find((t) => t.id === form.dataset.threadId);
-    if (!thread) return;
-    thread.replies.push({
-      id: "rp-" + Date.now(),
-      author: u ? u.username : "สมาชิก",
-      text,
-      createdAt: new Date().toLocaleString("th-TH")
-    });
-    saveState();
-    renderThreads();
-  });
-  applyLanguage();
-  renderThreads();
-}
-
-function renderNotifications() {
-  document.getElementById("publicNotifCount").textContent = state.publicNotifications.length;
-  document.getElementById("adminNotifCount").textContent = state.adminNotifications.length;
-
-  const user = getCurrentUser();
-  const isAdmin = user?.role === "admin";
-  document.getElementById("openAdminNotifBtn").classList.toggle("hidden", !isAdmin);
-  document.getElementById("publicNotifForm").classList.toggle("hidden", !isAdmin);
-  if (!isAdmin) document.getElementById("adminNotifPanel").classList.add("hidden");
-
-  document.getElementById("publicNotifList").innerHTML = state.publicNotifications.length
-    ? state.publicNotifications
-        .map(
-          (n) => `
-          <div class="notif-item">
-            <div>
-              <div>${n.text}</div>
-              <div class="muted small-text">${n.createdAt}</div>
-            </div>
-            ${isAdmin ? `<button type="button" class="btn btn-soft" data-del-public-notif="${n.id}">ลบ</button>` : ""}
-          </div>`
-        )
-        .join("")
-    : '<p class="muted small-text">ยังไม่มีการแจ้งเตือน</p>';
-
-  document.getElementById("adminNotifList").innerHTML = state.adminNotifications.length
-    ? state.adminNotifications
-        .map(
-          (n) => `
-          <div class="notif-item">
-            <div>
-              <strong>[${n.type === "donate" ? "โดเนทใหม่" : "VIP ขอมอด"}]</strong> ${n.message}
-              <div class="muted small-text">${n.createdAt}</div>
-            </div>
-            <button type="button" class="btn btn-soft" data-del-admin-notif="${n.id}">รับทราบ</button>
-          </div>`
-        )
-        .join("")
-    : '<p class="muted small-text">ไม่มีแจ้งเตือนใหม่สำหรับผู้ดูแลระบบ</p>';
-}
-
-function renderHeaderAndProfile() {
-  document.getElementById("siteTitle").textContent = state.settings.siteTitle;
-  const ann = document.getElementById("announcementBar");
-  if (state.settings.announcement) {
-    ann.textContent = state.settings.announcement;
-    ann.classList.remove("hidden");
-  } else {
-    ann.classList.add("hidden");
-  }
-
-  document.getElementById("modeNormalBtn").classList.toggle("active", state.contentMode === "normal");
-  document.getElementById("modeAdultBtn").classList.toggle("active", state.contentMode === "18+");
-
-  const user = getCurrentUser();
-  const authBtn = document.getElementById("authBtn");
-  const guestBox = document.getElementById("guestProfileBox");
-  const userBox = document.getElementById("userProfileBox");
-  const adminBadge = document.getElementById("adminBadge");
-  const vipBadge = document.getElementById("vipBadge");
-  const uploadBadge = document.getElementById("uploadPermissionBadge");
-  const cmsBtn = document.getElementById("toggleCmsBtn");
-  const cmsPanel = document.getElementById("cmsPanel");
-
-  document.getElementById("guestAvatarImg").src = DEFAULT_AVATAR;
-
-  if (!user) {
-    authBtn.textContent = state.lang === "en" ? "Login" : "เข้าสู่ระบบ";
-    guestBox.classList.remove("hidden");
-    userBox.classList.add("hidden");
-    adminBadge.classList.add("hidden");
-    vipBadge.classList.add("hidden");
-    uploadBadge.classList.add("hidden");
-    cmsBtn.classList.add("hidden");
-    cmsPanel.classList.add("hidden");
-    return;
-  }
-
-  authBtn.textContent = state.lang === "en" ? `Logout (${user.username})` : `ออกจากระบบ (${user.username})`;
-  guestBox.classList.add("hidden");
-  userBox.classList.remove("hidden");
-
-  document.getElementById("userNameText").textContent = user.username;
-  document.getElementById("userProviderBadge").textContent = user.provider || "local";
-  document.getElementById("userIdBadge").textContent = `ID: ${user.id}`;
-  document.getElementById("userTitleBadge").textContent = user.titleLabel;
-  document.getElementById("userRankText").textContent = getRankByExp(user.exp).name;
-  document.getElementById("userPointsText").textContent = user.points;
-  document.getElementById("userExpText").textContent = user.exp;
-
-  const avatarImg = document.getElementById("userAvatarImg");
-  const avatarFrame = document.getElementById("userAvatarFrame");
-  avatarImg.src = user.avatarSrc || DEFAULT_AVATAR;
-  avatarFrame.className = `avatar-frame ${user.frameId || "frame-none"}`;
-
-  const isAdmin = user.role === "admin";
-  const canUpload = canUserUploadMod(user);
-
-  adminBadge.classList.toggle("hidden", !isAdmin);
-  vipBadge.classList.toggle("hidden", !user.isVip && !isAdmin);
-  uploadBadge.classList.toggle("hidden", !canUpload);
-  cmsBtn.classList.toggle("hidden", !isAdmin && !canUpload);
-
-  document.querySelectorAll(".admin-only-block").forEach((el) => el.classList.toggle("hidden", !isAdmin));
-  document.getElementById("modForm").classList.toggle("hidden", !canUpload);
-  if (!isAdmin && !canUpload) cmsPanel.classList.add("hidden");
-}
-
 function renderSidebars() {
-  // กรองบัญชีผู้ดูแลระบบ (admin) ออกจากอันดับ Rank ผู้ใช้ที่ EXP สูงสุด
   const sortedMembers = [...state.users]
     .filter((u) => u.role !== "admin")
     .sort((a, b) => b.exp - a.exp);
@@ -641,9 +18,22 @@ function renderSidebars() {
         .join("")
     : '<p class="muted small-text">ยังไม่มีข้อมูลสมาชิก</p>';
 
-  document.getElementById("rankTiersList").innerHTML = RANK_LEVELS.map(
-    (r) => `<div class="tier-item"><span>${r.name}</span><span>${r.minExp} EXP</span></div>`
-  ).join("");
+  const modalRankList = document.getElementById("rankTiersModalList");
+  if (modalRankList) {
+    const user = getCurrentUser();
+    const currentExp = Number(user?.exp || 0);
+    modalRankList.innerHTML = RANK_LEVELS.map((r) => {
+      const reached = user && currentExp >= r.minExp;
+      return `
+        <div class="tier-item">
+          <div>
+            <strong>${r.name}</strong>
+            <div class="muted small-text">เงื่อนไข: สะสม EXP ขั้นต่ำ ${r.minExp} EXP</div>
+          </div>
+          <span class="${reached ? "upload-badge" : "provider-badge"}">${reached ? "ปลดล็อกแล้ว" : `${r.minExp} EXP`}</span>
+        </div>`;
+    }).join("");
+  }
 
   const user = getCurrentUser();
   document.getElementById("cosmeticShopList").innerHTML = state.cosmetics
@@ -661,6 +51,66 @@ function renderSidebars() {
         </div>`;
     })
     .join("");
+}
+
+function renderCosmeticModal() {
+  const user = getCurrentUser();
+  const body = document.getElementById("cosmeticModalBody");
+  if (!user || !body) return;
+
+  const titleOptions = [...new Set(["นักผจญภัยหน้าใหม่", ...(user.unlockedTitles || []), ...state.cosmetics.filter((c) => c.type === "title" && canUnlockCosmetic(c, user)).map((c) => c.value)])];
+  const frameOptions = [...new Set(["frame-none", ...(user.unlockedFrames || []), ...state.cosmetics.filter((c) => c.type === "frame" && canUnlockCosmetic(c, user)).map((c) => c.value)])];
+  const avatarOptions = [...new Set([DEFAULT_AVATAR, ...(user.unlockedAvatars || []), ...state.cosmetics.filter((c) => c.type === "avatar" && canUnlockCosmetic(c, user)).map((c) => c.value)])];
+
+  body.innerHTML = `
+    <div class="form-group">
+      <label for="editTitleSelect">เลือกฉายา (Title)</label>
+      <select id="editTitleSelect">
+        ${titleOptions.map((t) => `<option value="${t}" ${user.titleLabel === t ? "selected" : ""}>${t}</option>`).join("")}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="editFrameSelect">เลือกกรอบรูปโปรไฟล์ (Frame)</label>
+      <select id="editFrameSelect">
+        ${frameOptions.map((f) => `<option value="${f}" ${user.frameId === f ? "selected" : ""}>${f}</option>`).join("")}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="editAvatarSelect">เลือกรูปโปรไฟล์ที่ปลดล็อกแล้ว</label>
+      <select id="editAvatarSelect">
+        ${avatarOptions.map((a, idx) => `<option value="${a}" ${user.avatarSrc === a ? "selected" : ""}>รูปโปรไฟล์ #${idx + 1}</option>`).join("")}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="uploadCustomAvatarInput">หรืออัปโหลดรูปโปรไฟล์ใหม่จากเครื่อง</label>
+      <input type="file" id="uploadCustomAvatarInput" accept="image/*" />
+    </div>
+    <button type="button" id="saveCosmeticProfileBtn" class="btn btn-primary">บันทึกการปรับแต่ง</button>
+  `;
+
+  let pendingAvatar = user.avatarSrc || DEFAULT_AVATAR;
+  document.getElementById("uploadCustomAvatarInput")?.addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      pendingAvatar = String(reader.result || DEFAULT_AVATAR);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById("saveCosmeticProfileBtn")?.addEventListener("click", () => {
+    user.titleLabel = document.getElementById("editTitleSelect").value;
+    user.frameId = document.getElementById("editFrameSelect").value;
+    const chosenAvatar = document.getElementById("editAvatarSelect").value;
+    user.avatarSrc = pendingAvatar !== (user.avatarSrc || DEFAULT_AVATAR) ? pendingAvatar : chosenAvatar;
+    if (!user.unlockedAvatars.includes(user.avatarSrc)) {
+      user.unlockedAvatars.push(user.avatarSrc);
+    }
+    saveState();
+    document.getElementById("cosmeticModal").classList.add("hidden");
+    renderAll();
+  });
 }
 
 function renderMods() {
@@ -823,6 +273,23 @@ function bindHomeEvents() {
     saveState(false);
     applyLanguage();
     renderHeaderAndProfile();
+  });
+
+  document.getElementById("openRankTiersBtn")?.addEventListener("click", () => {
+    renderSidebars();
+    document.getElementById("rankTiersModal")?.classList.remove("hidden");
+  });
+  document.getElementById("closeRankTiersModalBtn")?.addEventListener("click", () => {
+    document.getElementById("rankTiersModal")?.classList.add("hidden");
+  });
+
+  document.getElementById("openCosmeticBtn")?.addEventListener("click", () => {
+    if (!getCurrentUser()) return;
+    renderCosmeticModal();
+    document.getElementById("cosmeticModal")?.classList.remove("hidden");
+  });
+  document.getElementById("closeCosmeticModalBtn")?.addEventListener("click", () => {
+    document.getElementById("cosmeticModal")?.classList.add("hidden");
   });
 
   document.getElementById("openPublicNotifBtn").addEventListener("click", () => {
@@ -1014,7 +481,6 @@ function bindHomeEvents() {
     alert(`กู้คืนบัญชี ${target.username} เรียบร้อยแล้วครับ`);
   });
 
-  // หน้าขอมอดแปลไทยเกมต่อไป (ดูรายชื่อสาธารณะ แยกปกติ / 18+)
   document.getElementById("openRequestBtn").addEventListener("click", () => {
     renderPublicRequests();
     document.getElementById("requestModal").classList.remove("hidden");
@@ -1077,7 +543,6 @@ function bindHomeEvents() {
     }
   });
 
-  // ระบบโดเนท & ส่งหลักฐานให้ผู้ดูแลระบบ
   document.getElementById("openDonateBtn").addEventListener("click", () => {
     const user = getCurrentUser();
     if (user) {
@@ -1232,9 +697,18 @@ function bindHomeEvents() {
     const item = state.cosmetics.find((c) => c.id === btn.dataset.claimCosmetic);
     if (!item || !canUnlockCosmetic(item, user)) return;
 
-    if (item.type === "title") user.titleLabel = item.value;
-    if (item.type === "frame") user.frameId = item.value;
-    if (item.type === "avatar") user.avatarSrc = item.value;
+    if (item.type === "title") {
+      user.titleLabel = item.value;
+      if (!user.unlockedTitles.includes(item.value)) user.unlockedTitles.push(item.value);
+    }
+    if (item.type === "frame") {
+      user.frameId = item.value;
+      if (!user.unlockedFrames.includes(item.value)) user.unlockedFrames.push(item.value);
+    }
+    if (item.type === "avatar") {
+      user.avatarSrc = item.value;
+      if (!user.unlockedAvatars.includes(item.value)) user.unlockedAvatars.push(item.value);
+    }
     saveState();
     renderAll();
   });
