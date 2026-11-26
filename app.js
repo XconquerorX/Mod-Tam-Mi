@@ -1,156 +1,127 @@
-const STORAGE_KEY = "thai_mod_hub_state_v6";
-const SESSION_ROLE_KEY = "thai_mod_hub_role";
-const SESSION_USER_KEY = "thai_mod_hub_username";
-const CATEGORIES = ["ทั้งหมด", "RPG", "Simulation", "Survival", "UI & QoL"];
+const STORAGE_KEY = "thai_mod_hub_state_v1";
 
 const RANK_LEVELS = [
-  { level: 1, name: "มือใหม่หัดลงมอด", minExp: 0 },
-  { level: 2, name: "นักสำรวจมอด", minExp: 100 },
-  { level: 3, name: "นักล่าแพ็กแปล", minExp: 250 },
-  { level: 4, name: "ผู้ชำนาญการมอด", minExp: 500 },
-  { level: 5, name: "ผู้พิทักษ์คลังมอด", minExp: 900 },
-  { level: 6, name: "จ้าวแห่งมอดแปลไทย", minExp: 1500 },
-  { level: 7, name: "ตำนานผู้สนับสนุน", minExp: 2500 }
+  { minExp: 0, name: "ระดับ 1: มือใหม่หัดลงมอด" },
+  { minExp: 100, name: "ระดับ 2: นักสำรวจมอด" },
+  { minExp: 300, name: "ระดับ 3: ผู้ช่วยแปลท้องถิ่น" },
+  { minExp: 600, name: "ระดับ 4: นักผจญภัยสายมอด" },
+  { minExp: 1000, name: "ระดับ 5: ผู้เชี่ยวชาญมอดไทย" },
+  { minExp: 1600, name: "ระดับ 6: ปรมาจารย์สายมอด" },
+  { minExp: 2500, name: "ระดับ 7: ตำนานแห่ง Thai Mod Hub" }
 ];
 
-function makeSvgAvatar(bg, fg, label) {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"><rect width="96" height="96" rx="48" fill="${bg}"/><circle cx="48" cy="38" r="16" fill="${fg}"/><path d="M22 80c2-15 14-24 26-24s24 9 26 24" fill="${fg}"/><text x="48" y="90" font-size="11" text-anchor="middle" fill="${fg}" font-family="sans-serif">${label}</text></svg>`;
-  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
-}
-
-const AVATAR_PRESETS = [
-  { id: "av-default", label: "ผู้เล่นพื้นฐาน", src: makeSvgAvatar("#e2e8f0", "#334155", "USER"), costPts: 0, reqExp: 0 },
-  { id: "av-sprout", label: "ชาวไร่มือใหม่", src: makeSvgAvatar("#dcfce7", "#15803d", "FARM"), costPts: 20, reqExp: 50 },
-  { id: "av-knight", label: "อัศวินสายมอด", src: makeSvgAvatar("#fef3c7", "#b45309", "KNIGHT"), costPts: 60, reqExp: 250 },
-  { id: "av-mage", label: "จอมเวทย์แปลภาษา", src: makeSvgAvatar("#ede9fe", "#6d28d9", "MAGE"), costPts: 120, reqExp: 900 }
-];
-
-const FRAME_PRESETS = [
-  { id: "frame-none", cssClass: "frame-none", label: "กรอบเรียบ", costPts: 0, reqExp: 0 },
-  { id: "frame-emerald", cssClass: "frame-emerald", label: "กรอบเขียวมรกต", costPts: 30, reqExp: 100 },
-  { id: "frame-amethyst", cssClass: "frame-amethyst", label: "กรอบอเมทิสต์", costPts: 80, reqExp: 500 },
-  { id: "frame-gold", cssClass: "frame-gold", label: "กรอบทองคำ VIP", costPts: 150, reqExp: 1500 },
-  { id: "frame-crimson", cssClass: "frame-crimson", label: "กรอบชาดตำนาน", costPts: 250, reqExp: 2500 }
-];
-
-const TITLE_PRESETS = [
-  { id: "t-newbie", label: "นักผจญภัยหน้าใหม่", costPts: 0, reqExp: 0 },
-  { id: "t-reader", label: "หนอนหนังสือแปลไทย", costPts: 25, reqExp: 100 },
-  { id: "t-hunter", label: "นักล่ามอดหายาก", costPts: 70, reqExp: 500 },
-  { id: "t-patron", label: "ผู้สนับสนุนหลัก", costPts: 140, reqExp: 1500 },
-  { id: "t-legend", label: "ราชันแห่งคลังมอด", costPts: 250, reqExp: 2500 }
-];
+const DEFAULT_AVATAR =
+  "data:image/svg+xml;utf8," +
+  encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect width="80" height="80" rx="40" fill="#0d9488"/><circle cx="40" cy="30" r="14" fill="#ffffff"/><path d="M16 68c4-14 15-20 24-20s20 6 24 20" fill="#ffffff"/></svg>`
+  );
 
 const DEFAULT_STATE = {
   settings: {
-    title: "Thai Mod Hub",
-    subtitle: "รวมมอดเกมแปลไทย อ่านง่าย ใช้งานสะดวก",
-    announcement: "เริ่มต้น 0 คะแนน & 0 EXP ทุกคน — โหลดมอด/เกม ทำกิจกรรม หรือโดเนท เพื่ออัปยศ 7 ระดับและปลดล็อกของตกแต่ง!",
-    accent: "#0d9488",
-    adminUser: "admin",
-    adminPass: "1234",
-    pointsPerDownload: 10,
-    expPerDownload: 25,
-    vipThreshold: 100,
-    requestCost: 50
+    siteTitle: "Thai Mod Hub",
+    siteSubtitle: "รวมมอดเกมแปลไทย อ่านง่าย ใช้งานสะดวก ดาวน์โหลดฟรี",
+    announcement: "ยินดีต้อนรับสู่ Thai Mod Hub — สลับโหมดมอดปกติ/18+ และร่วมพูดคุยสอบถามได้ในกระดานด้านล่าง"
   },
+  contentMode: "normal",
+  currentUserId: null,
   users: [
     {
-      username: "player01",
-      displayName: "player01",
+      id: "u-admin",
+      username: "admin",
       password: "123",
-      points: 0,
-      exp: 0,
-      isVip: false,
-      avatarSrc: AVATAR_PRESETS[0].src,
+      role: "admin",
+      points: 999,
+      exp: 2600,
+      avatarSrc: DEFAULT_AVATAR,
+      frameId: "frame-gold",
+      titleLabel: "ผู้ดูแลระบบ",
+      unlockedAvatars: [DEFAULT_AVATAR],
+      unlockedFrames: ["frame-none", "frame-gold", "frame-neon"],
+      unlockedTitles: ["นักผจญภัยหน้าใหม่", "ผู้ดูแลระบบ"]
+    },
+    {
+      id: "u-member1",
+      username: "player1",
+      password: "123",
+      role: "member",
+      points: 120,
+      exp: 350,
+      avatarSrc: DEFAULT_AVATAR,
       frameId: "frame-none",
       titleLabel: "นักผจญภัยหน้าใหม่",
-      unlockedAvatars: ["av-default"],
+      unlockedAvatars: [DEFAULT_AVATAR],
       unlockedFrames: ["frame-none"],
-      unlockedTitles: ["t-newbie"]
+      unlockedTitles: ["นักผจญภัยหน้าใหม่"]
+    }
+  ],
+  cosmetics: [
+    { id: "c-title-1", type: "title", value: "นักผจญภัยสายมอด", unlockPoints: 50, unlockExp: 0 },
+    { id: "c-title-2", type: "title", value: "ผู้เชี่ยวชาญมอดไทย", unlockPoints: 0, unlockExp: 500 },
+    { id: "c-frame-1", type: "frame", value: "frame-neon", unlockPoints: 100, unlockExp: 0 },
+    { id: "c-frame-2", type: "frame", value: "frame-gold", unlockPoints: 0, unlockExp: 1000 }
+  ],
+  mods: [
+    {
+      id: "m-1",
+      title: "Stardew Valley — แพตช์แปลไทย",
+      category: "Simulation",
+      rating: "normal",
+      description: "แปลเมนู เควส และบทสนทนาหลักให้อ่านง่าย พร้อมฟอนต์ภาษาไทย",
+      url: "https://example.com/stardew-th",
+      image: "",
+      downloads: 0
+    },
+    {
+      id: "m-2",
+      title: "Project Zomboid — มอดแปลไทย (Build 42)",
+      category: "Survival",
+      rating: "normal",
+      description: "แปลไอเทม อาชีพ และคำอธิบายสกิลให้เข้าใจง่ายสำหรับผู้เล่นใหม่",
+      url: "https://example.com/pz-th",
+      image: "",
+      downloads: 0
+    },
+    {
+      id: "m-3",
+      title: "ตัวอย่างมอดโหมด 18+",
+      category: "RPG",
+      rating: "18+",
+      description: "รายการตัวอย่างสำหรับทดสอบการสลับโหมดมอดเกมปกติและเกม 18+",
+      url: "https://example.com/adult-mod-demo",
+      image: "",
+      downloads: 0
     }
   ],
   requests: [],
-  mods: [
+  bugReports: [],
+  threads: [
     {
-      id: "mod-1",
-      name: "แพ็กแปลไทยเควสต์และคำอธิบายไอเทม (v1.2)",
-      game: "Otherworld [Dungeons & Dragons]",
-      category: "RPG",
-      desc: "แปลคำอธิบายไอเทมหลัก เควสต์เริ่มต้น และข้อความเมนูสำคัญ โดยคงชื่อไอเทมภาษาอังกฤษเดิมไว้เพื่อให้ค้นหาง่าย",
-      install: "1. แตกไฟล์ ZIP\n2. นำโฟลเดอร์ไปวางในโฟลเดอร์ resourcepacks ของเกม\n3. เปิดเกมและเลือกแพ็กภาษาไทย",
-      url: "https://example.com/mod-rpg-th",
-      downloads: 342,
-      createdAt: 1732000000000
-    },
-    {
-      id: "mod-2",
-      name: "แปลไทยบทสนทนาชาวบ้านและป้ายฟาร์ม",
-      game: "Stardew Valley",
-      category: "Simulation",
-      desc: "แปลบทสนทนาตัวละคร ชื่อฤดูกาล และคำแนะนำการปลูกพืชให้เข้าใจง่ายในสไตล์เกมทำฟาร์ม",
-      install: "1. สำรองไฟล์ภาษาเดิมไว้ก่อน\n2. วางไฟล์แปลไทยทับในโฟลเดอร์ Content ของตัวเกม",
-      url: "https://example.com/mod-farm-th",
-      downloads: 289,
-      createdAt: 1732086400000
-    },
-    {
-      id: "mod-3",
-      name: "แปลไทยเมนูเอาชีวิตรอดและระบบคราฟต์",
-      game: "Project Zomboid",
-      category: "Survival",
-      desc: "แปลรายละเอียดสูตรคราฟต์ อาชีพเริ่มต้น และคำอธิบายสถานะตัวละครให้เข้าใจง่าย",
-      install: "1. นำโฟลเดอร์มอดไปวางใน Zomboid/mods\n2. เปิดใช้งานมอดในเมนูหลักของเกม",
-      url: "https://example.com/mod-pz-th",
-      downloads: 215,
-      createdAt: 1732172800000
-    },
-    {
-      id: "mod-4",
-      name: "UI แสดงข้อมูลไอเทมและสถานะภาษาไทย",
-      game: "Minecraft Modded",
-      category: "UI & QoL",
-      desc: "ปรับปรุงคำอธิบายหน้าต่าง UI และคีย์ลัดให้เป็นภาษาไทยที่กระชับ อ่านสบายตา",
-      install: "1. วางไฟล์ในโฟลเดอร์ resourcepacks\n2. เลือกใช้งานในตั้งค่าภาษา",
-      url: "https://example.com/mod-ui-th",
-      downloads: 174,
-      createdAt: 1732259200000
-    },
-    {
-      id: "mod-5",
-      name: "แปลไทยระบบสกิลและสายอาชีพ",
-      game: "Fantasy Action RPG",
-      category: "RPG",
-      desc: "แปลคำอธิบายสกิลติดตัวและโบนัสชุดเกราะทั้งหมดเพื่อช่วยจัดบิลด์ได้ง่ายขึ้น",
-      install: "1. แตกไฟล์ลงในโฟลเดอร์มอดของเกม\n2. รีสตาร์ทตัวเกม",
-      url: "https://example.com/mod-skill-th",
-      downloads: 128,
-      createdAt: 1732345600000
+      id: "thread-welcome",
+      title: "กระดานพูดคุย & สอบถามการลงมอดแปลไทย",
+      body: "ติดปัญหาลงมอดเกมไหน หรืออยากแนะนำมอดแปลไทย พิมพ์คุยกันตรงนี้ได้เลยครับ",
+      author: "Admin",
+      createdAt: new Date().toLocaleString("th-TH"),
+      replies: []
     }
   ]
 };
 
-let state = loadState();
-let activeCategory = "ทั้งหมด";
-let currentRole = sessionStorage.getItem(SESSION_ROLE_KEY) || "guest";
-let currentUsername = sessionStorage.getItem(SESSION_USER_KEY) || "";
-let memberSubmitMode = "login";
-let pendingAvatarSrc = null;
+let uploadedModImageDataUrl = "";
 
 function normalizeUser(u) {
   return {
+    id: u.id,
     username: u.username,
-    displayName: u.displayName || u.username,
     password: u.password,
-    points: Number(u.points) || 0,
-    exp: Number(u.exp) || 0,
-    isVip: Boolean(u.isVip),
-    avatarSrc: u.avatarSrc || AVATAR_PRESETS[0].src,
+    role: u.role || "member",
+    points: Number(u.points || 0),
+    exp: Number(u.exp || 0),
+    avatarSrc: u.avatarSrc || DEFAULT_AVATAR,
     frameId: u.frameId || "frame-none",
     titleLabel: u.titleLabel || "นักผจญภัยหน้าใหม่",
-    unlockedAvatars: Array.isArray(u.unlockedAvatars) && u.unlockedAvatars.length ? u.unlockedAvatars : ["av-default"],
+    unlockedAvatars: Array.isArray(u.unlockedAvatars) && u.unlockedAvatars.length ? u.unlockedAvatars : [DEFAULT_AVATAR],
     unlockedFrames: Array.isArray(u.unlockedFrames) && u.unlockedFrames.length ? u.unlockedFrames : ["frame-none"],
-    unlockedTitles: Array.isArray(u.unlockedTitles) && u.unlockedTitles.length ? u.unlockedTitles : ["t-newbie"]
+    unlockedTitles: Array.isArray(u.unlockedTitles) && u.unlockedTitles.length ? u.unlockedTitles : ["นักผจญภัยหน้าใหม่"]
   };
 }
 
@@ -161,17 +132,28 @@ function loadState() {
     const parsed = JSON.parse(raw);
     return {
       settings: { ...DEFAULT_STATE.settings, ...(parsed.settings || {}) },
-      users: Array.isArray(parsed.users) ? parsed.users.map(normalizeUser) : structuredClone(DEFAULT_STATE.users),
+      contentMode: parsed.contentMode === "18+" ? "18+" : "normal",
+      currentUserId: parsed.currentUserId || null,
+      users: Array.isArray(parsed.users) && parsed.users.length ? parsed.users.map(normalizeUser) : structuredClone(DEFAULT_STATE.users),
+      cosmetics: Array.isArray(parsed.cosmetics) ? parsed.cosmetics : structuredClone(DEFAULT_STATE.cosmetics),
+      mods: Array.isArray(parsed.mods) ? parsed.mods : structuredClone(DEFAULT_STATE.mods),
       requests: Array.isArray(parsed.requests) ? parsed.requests : [],
-      mods: Array.isArray(parsed.mods) ? parsed.mods : structuredClone(DEFAULT_STATE.mods)
+      bugReports: Array.isArray(parsed.bugReports) ? parsed.bugReports : [],
+      threads: Array.isArray(parsed.threads) ? parsed.threads : structuredClone(DEFAULT_STATE.threads)
     };
   } catch {
     return structuredClone(DEFAULT_STATE);
   }
 }
 
+let state = loadState();
+
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function getCurrentUser() {
+  return state.users.find((u) => u.id === state.currentUserId) || null;
 }
 
 function getRankByExp(exp) {
@@ -182,842 +164,581 @@ function getRankByExp(exp) {
   return current;
 }
 
-function getFrameClass(frameId) {
-  const found = FRAME_PRESETS.find((f) => f.id === frameId);
-  return found ? found.cssClass : "frame-none";
+function canUnlockCosmetic(item, user) {
+  const reqPoints = Number(item.unlockPoints || 0);
+  const reqExp = Number(item.unlockExp || 0);
+  const userPoints = Number(user?.points || 0);
+  const userExp = Number(user?.exp || 0);
+
+  if (reqPoints === 0 && reqExp === 0) return true;
+  const passPoints = reqPoints > 0 && userPoints >= reqPoints;
+  const passExp = reqExp > 0 && userExp >= reqExp;
+  return passPoints || passExp;
 }
 
-function getCurrentMember() {
-  if (currentRole !== "user") return null;
-  const idx = state.users.findIndex((u) => u.username === currentUsername);
-  if (idx === -1) return null;
-  state.users[idx] = normalizeUser(state.users[idx]);
-  return state.users[idx];
+function formatUnlockRequirement(item) {
+  const reqPoints = Number(item.unlockPoints || 0);
+  const reqExp = Number(item.unlockExp || 0);
+  const parts = [];
+  if (reqPoints > 0) parts.push(`คะแนน ${reqPoints} แต้ม`);
+  if (reqExp > 0) parts.push(`EXP ${reqExp}`);
+  return parts.length ? `ปลดล็อกด้วย: ${parts.join(" หรือ ")}` : "ปลดล็อกฟรี";
 }
 
-function syncMemberVipStatus(member) {
-  if (!member) return;
-  if (member.points >= Number(state.settings.vipThreshold)) {
-    member.isVip = true;
+function renderHeaderAndProfile() {
+  document.getElementById("siteTitle").textContent = state.settings.siteTitle;
+  document.getElementById("siteSubtitle").textContent = state.settings.siteSubtitle;
+
+  const ann = document.getElementById("announcementBar");
+  if (state.settings.announcement) {
+    ann.textContent = state.settings.announcement;
+    ann.classList.remove("hidden");
+  } else {
+    ann.classList.add("hidden");
   }
-}
 
-function updateAuthUI() {
-  const isAdmin = currentRole === "admin";
-  const member = getCurrentMember();
+  document.getElementById("modeNormalBtn").classList.toggle("active", state.contentMode === "normal");
+  document.getElementById("modeAdultBtn").classList.toggle("active", state.contentMode === "18+");
 
-  document.getElementById("guestAvatarImg").src = AVATAR_PRESETS[0].src;
-  document.getElementById("adminAvatarImg").src = AVATAR_PRESETS[2].src;
-
-  document.body.classList.toggle("is-admin", isAdmin);
-
+  const user = getCurrentUser();
   const authBtn = document.getElementById("authBtn");
-  const reqBtn = document.getElementById("openRequestBtn");
   const guestBox = document.getElementById("guestProfileBox");
   const userBox = document.getElementById("userProfileBox");
-  const adminBox = document.getElementById("adminProfileBox");
+  const adminBadge = document.getElementById("adminBadge");
+  const cmsBtn = document.getElementById("toggleCmsBtn");
+  const cmsPanel = document.getElementById("cmsPanel");
 
-  if (member) {
-    syncMemberVipStatus(member);
-    const rank = getRankByExp(member.exp);
-    authBtn.textContent = "ออกจากระบบ";
-    authBtn.className = "btn btn-danger";
-    reqBtn.style.display = "inline-block";
+  document.getElementById("guestAvatarImg").src = DEFAULT_AVATAR;
 
-    guestBox.style.display = "none";
-    userBox.style.display = "block";
-    adminBox.style.display = "none";
-
-    document.getElementById("currentUserName").textContent = member.displayName;
-    document.getElementById("currentUserTitle").textContent = `ฉายา: ${member.titleLabel}`;
-    document.getElementById("currentUserRank").textContent = `Lv.${rank.level} ${rank.name}`;
-    document.getElementById("currentUserExp").textContent = `${member.exp} EXP`;
-    document.getElementById("currentUserPts").textContent = `${member.points} คะแนน`;
-    document.getElementById("currentUserVip").classList.toggle("active", Boolean(member.isVip));
-
-    document.getElementById("userAvatarImg").src = member.avatarSrc;
-    document.getElementById("userAvatarFrame").className = `avatar-frame ${getFrameClass(member.frameId)}`;
-  } else if (isAdmin) {
-    authBtn.textContent = "ออกจากระบบ";
-    authBtn.className = "btn btn-danger";
-    reqBtn.style.display = "none";
-
-    guestBox.style.display = "none";
-    userBox.style.display = "none";
-    adminBox.style.display = "block";
-    document.getElementById("adminProfileName").textContent = `บัญชี: ${state.settings.adminUser}`;
-  } else {
+  if (!user) {
     authBtn.textContent = "เข้าสู่ระบบ";
-    authBtn.className = "btn btn-primary";
-    reqBtn.style.display = "none";
-
-    guestBox.style.display = "block";
-    userBox.style.display = "none";
-    adminBox.style.display = "none";
-  }
-
-  renderUserRankSidebar();
-  if (isAdmin) renderAdminPanels();
-}
-
-function renderRankTiers() {
-  const el = document.getElementById("rankTiersList");
-  el.innerHTML = "";
-  RANK_LEVELS.forEach((r) => {
-    const row = document.createElement("div");
-    row.className = "rank-tier-row";
-    row.innerHTML = `<span><strong>Lv.${r.level}</strong> ${r.name}</span><span>${r.minExp} EXP</span>`;
-    el.appendChild(row);
-  });
-}
-
-function renderUserRankSidebar() {
-  const listEl = document.getElementById("userRankList");
-  listEl.innerHTML = "";
-
-  const sortedUsers = [...state.users]
-    .map(normalizeUser)
-    .sort((a, b) => b.exp - a.exp || b.points - a.points)
-    .slice(0, 7);
-
-  if (!sortedUsers.length) {
-    listEl.innerHTML = `<p style="font-size:0.84rem; color:var(--muted); margin:0;">ยังไม่มีสมาชิกในระบบ</p>`;
+    guestBox.classList.remove("hidden");
+    userBox.classList.add("hidden");
+    adminBadge.classList.add("hidden");
+    cmsBtn.classList.add("hidden");
+    cmsPanel.classList.add("hidden");
     return;
   }
 
-  sortedUsers.forEach((u, idx) => {
-    const rank = getRankByExp(u.exp);
-    const item = document.createElement("div");
-    item.className = "rank-item user-rank-item";
-    item.innerHTML = `
-      <div class="rank-num">${idx + 1}</div>
-      <div class="avatar-frame sm ${getFrameClass(u.frameId)}">
-        <img src="${u.avatarSrc}" alt="${u.displayName}" />
-      </div>
-      <div class="rank-info">
-        <div class="rank-name">${u.displayName} ${u.isVip ? '<span class="vip-tag active">VIP</span>' : ""}</div>
-        <div class="rank-meta">Lv.${rank.level} ${rank.name} • ${u.exp} EXP</div>
-        <div class="rank-meta" style="color:var(--title-text);">ฉายา: ${u.titleLabel}</div>
-      </div>
-    `;
-    listEl.appendChild(item);
-  });
+  authBtn.textContent = `ออกจากระบบ (${user.username})`;
+  guestBox.classList.add("hidden");
+  userBox.classList.remove("hidden");
+
+  document.getElementById("userNameText").textContent = user.username;
+  document.getElementById("userTitleBadge").textContent = user.titleLabel;
+  document.getElementById("userRankText").textContent = getRankByExp(user.exp).name;
+  document.getElementById("userPointsText").textContent = user.points;
+  document.getElementById("userExpText").textContent = user.exp;
+
+  const avatarImg = document.getElementById("userAvatarImg");
+  const avatarFrame = document.getElementById("userAvatarFrame");
+  avatarImg.src = user.avatarSrc || DEFAULT_AVATAR;
+  avatarFrame.className = `avatar-frame ${user.frameId || "frame-none"}`;
+
+  const isAdmin = user.role === "admin";
+  adminBadge.classList.toggle("hidden", !isAdmin);
+  cmsBtn.classList.toggle("hidden", !isAdmin);
+  if (!isAdmin) cmsPanel.classList.add("hidden");
 }
 
-function applySettings() {
-  const s = state.settings;
-  document.title = s.title;
-  document.getElementById("siteTitle").textContent = s.title;
-  document.getElementById("siteSubtitle").textContent = s.subtitle;
-  const annEl = document.getElementById("announcementBar");
-  annEl.textContent = s.announcement;
-  annEl.style.display = s.announcement.trim() ? "block" : "none";
-  document.documentElement.style.setProperty("--accent", s.accent);
+function renderSidebars() {
+  const sortedUsers = [...state.users].sort((a, b) => b.exp - a.exp);
+  document.getElementById("userRankList").innerHTML = sortedUsers
+    .map(
+      (u, idx) => `
+      <div class="rank-item">
+        <span>#${idx + 1} <strong>${u.username}</strong></span>
+        <span>${u.exp} EXP</span>
+      </div>`
+    )
+    .join("");
 
-  document.getElementById("ruleSummaryText").textContent =
-    `โหลดมอด/เกมรับ +${s.pointsPerDownload} คะแนน และ +${s.expPerDownload} EXP • รับเพิ่มได้จากการโดเนทหรือทำกิจกรรม • สะสมครบ ${s.vipThreshold} คะแนนรับ VIP • ใช้ ${s.requestCost} คะแนนขอมอดเกมต่อไป`;
+  document.getElementById("rankTiersList").innerHTML = RANK_LEVELS.map(
+    (r) => `<div class="tier-item"><span>${r.name}</span><span>${r.minExp} EXP</span></div>`
+  ).join("");
 
-  document.getElementById("cfgTitle").value = s.title;
-  document.getElementById("cfgSubtitle").value = s.subtitle;
-  document.getElementById("cfgAnnouncement").value = s.announcement;
-  document.getElementById("cfgAccent").value = s.accent;
-  document.getElementById("cfgPtsPerDl").value = s.pointsPerDownload;
-  document.getElementById("cfgExpPerDl").value = s.expPerDownload;
-  document.getElementById("cfgVipThreshold").value = s.vipThreshold;
-  document.getElementById("cfgRequestCost").value = s.requestCost;
-  document.getElementById("cfgAdminUser").value = s.adminUser;
-  document.getElementById("cfgAdminPass").value = s.adminPass;
-}
-
-function renderTopRank() {
-  const top5 = [...state.mods]
-    .sort((a, b) => b.downloads - a.downloads)
-    .slice(0, 5);
-
-  const container = document.getElementById("topRankList");
-  container.innerHTML = "";
-  top5.forEach((mod, idx) => {
-    const row = document.createElement("div");
-    row.className = "rank-item";
-    row.innerHTML = `
-      <div class="rank-num">${idx + 1}</div>
-      <div class="rank-info">
-        <div class="rank-name">${mod.name}</div>
-        <div class="rank-meta">${mod.game} • ${mod.downloads} โหลด</div>
-      </div>
-    `;
-    row.onclick = () => openDetailModal(mod.id);
-    container.appendChild(row);
-  });
-}
-
-function renderAdminPanels() {
-  const userList = document.getElementById("adminUserList");
-  userList.innerHTML = state.users.length
-    ? ""
-    : `<p style="font-size:0.85rem; color:var(--muted);">ยังไม่มีสมาชิกในระบบ</p>`;
-
-  state.users.map(normalizeUser).forEach((u, i) => {
-    const realUser = state.users[i];
-    const rank = getRankByExp(u.exp);
-    const item = document.createElement("div");
-    item.className = "admin-list-item";
-    item.innerHTML = `
-      <div style="flex: 1 1 200px;">
-        <strong>${u.displayName}</strong> <span style="color:var(--muted);">(@${u.username})</span> ${u.isVip ? '<span class="vip-tag active">VIP</span>' : ""}
-        <div style="color:var(--muted); font-size:0.8rem;">Lv.${rank.level} ${rank.name} • <strong>${u.exp} EXP</strong> • <strong>${u.points} คะแนน</strong></div>
-      </div>
-      <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-        <div style="display:flex; gap:4px; align-items:center;">
-          <input type="number" data-input="pts" placeholder="คะแนน" style="width:82px; padding:4px 8px; font-size:0.82rem;" />
-          <button class="btn btn-sm" data-act="addPts">+คะแนน</button>
-        </div>
-        <div style="display:flex; gap:4px; align-items:center;">
-          <input type="number" data-input="exp" placeholder="EXP" style="width:82px; padding:4px 8px; font-size:0.82rem;" />
-          <button class="btn btn-sm" data-act="addExp">+EXP</button>
-        </div>
-        <button class="btn btn-vip btn-sm" data-act="toggleVip">${u.isVip ? "ปลด VIP" : "ให้ VIP"}</button>
-      </div>
-    `;
-
-    item.querySelector('[data-act="addPts"]').onclick = () => {
-      const val = Number(item.querySelector('[data-input="pts"]').value);
-      if (!val) return;
-      realUser.points = Math.max(0, (Number(realUser.points) || 0) + val);
-      syncMemberVipStatus(realUser);
-      saveState();
-      renderAdminPanels();
-      renderUserRankSidebar();
-    };
-
-    item.querySelector('[data-act="addExp"]').onclick = () => {
-      const val = Number(item.querySelector('[data-input="exp"]').value);
-      if (!val) return;
-      realUser.exp = Math.max(0, (Number(realUser.exp) || 0) + val);
-      saveState();
-      renderAdminPanels();
-      renderUserRankSidebar();
-    };
-
-    item.querySelector('[data-act="toggleVip"]').onclick = () => {
-      realUser.isVip = !realUser.isVip;
-      saveState();
-      renderAdminPanels();
-      renderUserRankSidebar();
-    };
-
-    userList.appendChild(item);
-  });
-
-  const reqList = document.getElementById("adminRequestList");
-  reqList.innerHTML = state.requests.length
-    ? ""
-    : `<p style="font-size:0.85rem; color:var(--muted);">ยังไม่มีคำขอมอดแปลไทย</p>`;
-
-  state.requests.forEach((r) => {
-    const item = document.createElement("div");
-    item.className = "admin-list-item";
-    item.innerHTML = `
-      <div>
-        <strong>${r.game}</strong> <span style="color:var(--muted);">(${r.status})</span>
-        <div style="font-size:0.8rem; color:var(--muted);">โดย: ${r.username} ${r.ref ? "• " + r.ref : ""}</div>
-      </div>
-      <div style="display:flex; gap:6px;">
-        <button class="btn btn-primary btn-sm" data-act="done">รับแปลแล้ว</button>
-        <button class="btn btn-danger btn-sm" data-act="del">ลบ</button>
-      </div>
-    `;
-    item.querySelector('[data-act="done"]').onclick = () => {
-      r.status = "กำลังดำเนินการแปล";
-      saveState();
-      renderAdminPanels();
-    };
-    item.querySelector('[data-act="del"]').onclick = () => {
-      state.requests = state.requests.filter((x) => x.id !== r.id);
-      saveState();
-      renderAdminPanels();
-    };
-    reqList.appendChild(item);
-  });
-}
-
-function renderCategories() {
-  const bar = document.getElementById("categoryBar");
-  bar.innerHTML = "";
-  CATEGORIES.forEach((cat) => {
-    const btn = document.createElement("button");
-    btn.className = "chip" + (activeCategory === cat ? " active" : "");
-    btn.textContent = cat;
-    btn.onclick = () => {
-      activeCategory = cat;
-      renderCategories();
-      renderMods();
-    };
-    bar.appendChild(btn);
-  });
+  const user = getCurrentUser();
+  document.getElementById("cosmeticShopList").innerHTML = state.cosmetics
+    .map((item) => {
+      const unlocked = user ? canUnlockCosmetic(item, user) : false;
+      return `
+        <div class="cosmetic-item">
+          <div>
+            <strong>${item.value}</strong> <span class="muted small-text">(${item.type})</span>
+            <div class="muted small-text">${formatUnlockRequirement(item)}</div>
+          </div>
+          <button type="button" class="btn btn-soft" data-claim-cosmetic="${item.id}" ${!user || !unlocked ? "disabled" : ""}>
+            ${!user ? "ล็อกอินก่อน" : unlocked ? "รับ/ใช้" : "ยังไม่ถึงเกณฑ์"}
+          </button>
+        </div>`;
+    })
+    .join("");
 }
 
 function renderMods() {
-  const q = document.getElementById("searchInput").value.trim().toLowerCase();
-  const sortBy = document.getElementById("sortSelect").value;
+  const search = (document.getElementById("searchModInput").value || "").trim().toLowerCase();
+  const cat = document.getElementById("categoryFilter").value;
 
-  let list = state.mods.filter((m) => {
-    const matchCat = activeCategory === "ทั้งหมด" || m.category === activeCategory;
-    const matchText =
-      !q ||
-      m.name.toLowerCase().includes(q) ||
-      m.game.toLowerCase().includes(q) ||
-      m.desc.toLowerCase().includes(q);
-    return matchCat && matchText;
+  const categories = [...new Set(state.mods.map((m) => m.category).filter(Boolean))];
+  const selectEl = document.getElementById("categoryFilter");
+  const prevCat = selectEl.value;
+  selectEl.innerHTML =
+    '<option value="all">ทุกหมวดหมู่</option>' +
+    categories.map((c) => `<option value="${c}">${c}</option>`).join("");
+  selectEl.value = categories.includes(prevCat) ? prevCat : "all";
+
+  const filtered = state.mods.filter((m) => {
+    const modRating = m.rating || "normal";
+    if (modRating !== state.contentMode) return false;
+    if (cat !== "all" && m.category !== cat) return false;
+    if (search) {
+      const hay = `${m.title} ${m.category} ${m.description}`.toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
+    return true;
   });
 
-  list.sort((a, b) =>
-    sortBy === "downloads" ? b.downloads - a.downloads : b.createdAt - a.createdAt
-  );
-
-  const grid = document.getElementById("modGrid");
-  grid.innerHTML = "";
-
-  if (!list.length) {
-    grid.innerHTML = `<p style="color:var(--muted);">ไม่พบมอดที่ตรงกับเงื่อนไขการค้นหา</p>`;
+  const listEl = document.getElementById("modList");
+  if (!filtered.length) {
+    listEl.innerHTML = `<div class="card-box muted">ไม่พบรายการมอดในโหมด "${state.contentMode === "18+" ? "มอดเกม 18+" : "มอดเกมปกติ"}"</div>`;
     return;
   }
 
-  list.forEach((mod) => {
-    const card = document.createElement("article");
-    card.className = "card";
-    card.innerHTML = `
-      <div>
-        <span class="badge">${mod.category}</span>
-        <h3 class="card-title">${mod.name}</h3>
-        <div class="card-game">เกม: ${mod.game}</div>
-        <p class="card-desc">${mod.desc}</p>
-      </div>
-      <div>
-        <div class="card-footer">
-          <span>ดาวน์โหลดแล้ว ${mod.downloads} ครั้ง</span>
-          <span>ดูรายละเอียด →</span>
-        </div>
-        <div class="card-edit-bar" onclick="event.stopPropagation()">
-          <button class="btn btn-sm" data-action="edit">แก้ไข</button>
-          <button class="btn btn-danger btn-sm" data-action="delete">ลบ</button>
-        </div>
-      </div>
-    `;
-
-    card.onclick = () => openDetailModal(mod.id);
-    card.querySelector('[data-action="edit"]').onclick = () => openEditorModal(mod.id);
-    card.querySelector('[data-action="delete"]').onclick = () => deleteMod(mod.id);
-    grid.appendChild(card);
-  });
-
-  renderTopRank();
+  listEl.innerHTML = filtered
+    .map(
+      (m) => `
+      <article class="mod-card">
+        ${m.image ? `<img src="${m.image}" alt="${m.title}" class="mod-card-img" />` : ""}
+        ${(m.rating || "normal") === "18+" ? `<span class="badge-18">18+</span>` : ""}
+        <h3>${m.title}</h3>
+        <div class="muted small-text">หมวดหมู่: ${m.category} · โหลดแล้ว ${m.downloads || 0} ครั้ง</div>
+        <p>${m.description}</p>
+        <a href="${m.url}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" data-download-mod="${m.id}">ดาวน์โหลดมอด</a>
+      </article>`
+    )
+    .join("");
 }
 
-function openDetailModal(id) {
-  const mod = state.mods.find((m) => m.id === id);
-  if (!mod) return;
-  document.getElementById("detailCategory").textContent = mod.category;
-  document.getElementById("detailTitle").textContent = mod.name;
-  document.getElementById("detailGame").textContent = `เกม: ${mod.game}`;
-  document.getElementById("detailDesc").textContent = mod.desc;
-  document.getElementById("detailInstall").textContent = mod.install;
+function renderThreads() {
+  const listEl = document.getElementById("threadList");
+  if (!state.threads.length) {
+    listEl.innerHTML = "<p class='muted'>ยังไม่มีกระทู้ เริ่มตั้งกระทู้แรกได้เลย</p>";
+    return;
+  }
+  listEl.innerHTML = state.threads
+    .map(
+      (t) => `
+      <article class="thread-card">
+        <h3>${t.title}</h3>
+        <div class="muted small-text">โดย ${t.author} · ${t.createdAt}</div>
+        <p>${t.body}</p>
+        <div>
+          ${(t.replies || [])
+            .map((r) => `<div class="reply-item"><strong>${r.author}:</strong> ${r.text} <span class="muted small-text">(${r.createdAt})</span></div>`)
+            .join("")}
+        </div>
+        <form class="reply-form" data-thread-id="${t.id}">
+          <input type="text" class="reply-input" placeholder="พิมพ์ข้อความตอบกลับ..." required />
+          <button type="submit" class="btn btn-primary">ตอบกลับ</button>
+        </form>
+      </article>`
+    )
+    .join("");
+}
 
-  const dlLink = document.getElementById("detailDownloadLink");
-  dlLink.href = mod.url;
-  dlLink.onclick = () => {
-    mod.downloads += 1;
-    const member = getCurrentMember();
-    if (member) {
-      member.points += Number(state.settings.pointsPerDownload) || 0;
-      member.exp += Number(state.settings.expPerDownload) || 0;
-      syncMemberVipStatus(member);
-      updateAuthUI();
+function renderAdminLists() {
+  const user = getCurrentUser();
+  if (!user || user.role !== "admin") return;
+
+  document.getElementById("adminUserList").innerHTML = state.users
+    .map(
+      (u) => `
+      <div class="admin-row">
+        <div>
+          <strong>${u.username}</strong>
+          <div class="muted small-text">คะแนน: ${u.points} | EXP: ${u.exp}</div>
+        </div>
+        <div class="header-right-actions">
+          <button type="button" class="btn btn-soft" data-adj-points="${u.id}">+20 แต้ม</button>
+          <button type="button" class="btn btn-soft" data-adj-exp="${u.id}">+50 EXP</button>
+        </div>
+      </div>`
+    )
+    .join("");
+
+  document.getElementById("adminRequestList").innerHTML = state.requests.length
+    ? state.requests
+        .map(
+          (r) => `
+          <div class="admin-row">
+            <div>
+              <strong>${r.game}</strong> <span class="muted small-text">(${r.by})</span>
+              <div class="muted small-text">${r.note || "-"}</div>
+            </div>
+          </div>`
+        )
+        .join("")
+    : '<p class="muted small-text">ยังไม่มีคำขอมอด</p>';
+}
+
+function renderBugAdminList() {
+  const box = document.getElementById("bugAdminList");
+  const user = getCurrentUser();
+  if (!user || user.role !== "admin") {
+    box.innerHTML = "";
+    return;
+  }
+  box.innerHTML =
+    "<h4>รายการแจ้งบัค (สำหรับ Admin)</h4>" +
+    (state.bugReports.length
+      ? state.bugReports
+          .map(
+            (b) => `
+            <div class="bug-item">
+              <strong>${b.target}</strong> <span class="muted small-text">(${b.author} · ${b.createdAt})</span>
+              <p>${b.description}</p>
+              <button type="button" class="btn btn-soft" data-delete-bug="${b.id}">ลบรายการ</button>
+            </div>`
+          )
+          .join("")
+      : '<p class="muted small-text">ยังไม่มีรายงานบัค</p>');
+}
+
+function bindEvents() {
+  document.getElementById("authBtn").addEventListener("click", () => {
+    if (getCurrentUser()) {
+      state.currentUserId = null;
+      saveState();
+      renderAll();
+    } else {
+      document.getElementById("authModal").classList.remove("hidden");
     }
+  });
+
+  document.getElementById("closeAuthModalBtn").addEventListener("click", () => {
+    document.getElementById("authModal").classList.add("hidden");
+  });
+
+  document.getElementById("authForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const username = document.getElementById("authUsernameInput").value.trim();
+    const password = document.getElementById("authPasswordInput").value;
+    let found = state.users.find((u) => u.username === username);
+
+    if (found) {
+      if (found.password !== password) {
+        alert("รหัสผ่านไม่ถูกต้องครับ");
+        return;
+      }
+    } else {
+      found = normalizeUser({
+        id: "u-" + Date.now(),
+        username,
+        password,
+        role: "member",
+        points: 20,
+        exp: 10
+      });
+      state.users.push(found);
+    }
+
+    state.currentUserId = found.id;
     saveState();
+    e.target.reset();
+    document.getElementById("authModal").classList.add("hidden");
+    renderAll();
+  });
+
+  document.getElementById("openRequestBtn").addEventListener("click", () => {
+    document.getElementById("requestModal").classList.remove("hidden");
+  });
+
+  document.getElementById("closeRequestModalBtn").addEventListener("click", () => {
+    document.getElementById("requestModal").classList.add("hidden");
+  });
+
+  document.getElementById("requestForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const user = getCurrentUser();
+    const game = document.getElementById("requestGameInput").value.trim();
+    const note = document.getElementById("requestNoteInput").value.trim();
+    if (!game) return;
+
+    state.requests.unshift({
+      id: "req-" + Date.now(),
+      game,
+      note,
+      by: user ? user.username : "ผู้เยี่ยมชม"
+    });
+    saveState();
+    e.target.reset();
+    document.getElementById("requestModal").classList.add("hidden");
+    renderAdminLists();
+    alert("ส่งคำขอมอดเรียบร้อยแล้วครับ");
+  });
+
+  document.getElementById("toggleCmsBtn").addEventListener("click", () => {
+    document.getElementById("cmsPanel").classList.toggle("hidden");
+    renderAdminLists();
+  });
+
+  // รูปภาพในหน้าลงมอด
+  const urlInput = document.getElementById("modImageUrlInput");
+  const fileInput = document.getElementById("modImageFileInput");
+  const preview = document.getElementById("modImagePreview");
+
+  const updatePreview = (src) => {
+    if (src) {
+      preview.src = src;
+      preview.classList.remove("hidden");
+    } else {
+      preview.src = "";
+      preview.classList.add("hidden");
+    }
+  };
+
+  urlInput.addEventListener("input", () => {
+    const val = urlInput.value.trim();
+    if (val) {
+      uploadedModImageDataUrl = "";
+      updatePreview(val);
+    } else {
+      updatePreview(uploadedModImageDataUrl);
+    }
+  });
+
+  fileInput.addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      uploadedModImageDataUrl = String(reader.result || "");
+      urlInput.value = "";
+      updatePreview(uploadedModImageDataUrl);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById("modForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const title = document.getElementById("modTitleInput").value.trim();
+    const category = document.getElementById("modCategoryInput").value.trim();
+    const rating = document.getElementById("modRatingInput").value;
+    const description = document.getElementById("modDescInput").value.trim();
+    const url = document.getElementById("modUrlInput").value.trim();
+    const image = uploadedModImageDataUrl || urlInput.value.trim() || "";
+    if (!title || !category || !description || !url) return;
+
+    state.mods.unshift({
+      id: "m-" + Date.now(),
+      title,
+      category,
+      rating,
+      description,
+      url,
+      image,
+      downloads: 0
+    });
+    saveState();
+    e.target.reset();
+    uploadedModImageDataUrl = "";
+    updatePreview("");
+    renderMods();
+  });
+
+  document.getElementById("cosmeticForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const type = document.getElementById("cosmeticTypeInput").value;
+    const value = document.getElementById("cosmeticNameInput").value.trim();
+    const unlockPoints = Math.max(0, Number(document.getElementById("cosmeticReqPoints").value || 0));
+    const unlockExp = Math.max(0, Number(document.getElementById("cosmeticReqExp").value || 0));
+    if (!value) return;
+
+    state.cosmetics.push({
+      id: "c-" + Date.now(),
+      type,
+      value,
+      unlockPoints,
+      unlockExp
+    });
+    saveState();
+    e.target.reset();
+    renderSidebars();
+  });
+
+  document.getElementById("cosmeticShopList").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-claim-cosmetic]");
+    if (!btn) return;
+    const user = getCurrentUser();
+    if (!user) return;
+    const item = state.cosmetics.find((c) => c.id === btn.dataset.claimCosmetic);
+    if (!item || !canUnlockCosmetic(item, user)) return;
+
+    if (item.type === "title") user.titleLabel = item.value;
+    if (item.type === "frame") user.frameId = item.value;
+    if (item.type === "avatar") user.avatarSrc = item.value;
+
+    saveState();
+    renderAll();
+  });
+
+  document.getElementById("adminUserList").addEventListener("click", (e) => {
+    const ptsBtn = e.target.closest("[data-adj-points]");
+    const expBtn = e.target.closest("[data-adj-exp]");
+    if (ptsBtn) {
+      const target = state.users.find((u) => u.id === ptsBtn.dataset.adjPoints);
+      if (target) {
+        target.points += 20;
+        saveState();
+        renderAll();
+      }
+    }
+    if (expBtn) {
+      const target = state.users.find((u) => u.id === expBtn.dataset.adjExp);
+      if (target) {
+        target.exp += 50;
+        saveState();
+        renderAll();
+      }
+    }
+  });
+
+  // สลับโหมดมอดปกติ / 18+
+  const switchMode = (targetMode) => {
+    if (targetMode === "18+" && state.contentMode !== "18+") {
+      const ok = confirm("โหมดนี้สำหรับมอดเกม 18+ ยืนยันว่ามีอายุตามเกณฑ์ที่กำหนดหรือไม่?");
+      if (!ok) return;
+    }
+    state.contentMode = targetMode;
+    saveState();
+    renderHeaderAndProfile();
     renderMods();
   };
 
-  document.getElementById("detailModal").showModal();
-}
+  document.getElementById("modeNormalBtn").addEventListener("click", () => switchMode("normal"));
+  document.getElementById("modeAdultBtn").addEventListener("click", () => switchMode("18+"));
 
-function openEditorModal(id = null) {
-  if (currentRole !== "admin") return;
-  const form = document.getElementById("modForm");
-  form.reset();
-  if (id) {
-    const mod = state.mods.find((m) => m.id === id);
-    if (!mod) return;
-    document.getElementById("editorTitle").textContent = "แก้ไขข้อมูลมอด";
-    document.getElementById("modId").value = mod.id;
-    document.getElementById("modName").value = mod.name;
-    document.getElementById("modGame").value = mod.game;
-    document.getElementById("modCategory").value = mod.category;
-    document.getElementById("modDesc").value = mod.desc;
-    document.getElementById("modInstall").value = mod.install;
-    document.getElementById("modUrl").value = mod.url;
-  } else {
-    document.getElementById("editorTitle").textContent = "เพิ่มมอดแปลไทยใหม่";
-    document.getElementById("modId").value = "";
-  }
-  document.getElementById("editorModal").showModal();
-}
+  // ค้นหาและกรองหมวดหมู่
+  document.getElementById("searchModInput").addEventListener("input", renderMods);
+  document.getElementById("categoryFilter").addEventListener("change", renderMods);
 
-function deleteMod(id) {
-  if (currentRole !== "admin") return;
-  if (!confirm("ต้องการลบมอดรายการนี้ใช่หรือไม่?")) return;
-  state.mods = state.mods.filter((m) => m.id !== id);
-  saveState();
-  renderMods();
-}
-
-// ตั้งค่าโปรไฟล์และปลดล็อกของตกแต่ง
-function renderCosmeticsInModal(member) {
-  const rank = getRankByExp(member.exp);
-  document.getElementById("profileStatsSummary").textContent =
-    `ยศปัจจุบัน: Lv.${rank.level} ${rank.name} • EXP: ${member.exp} • คะแนนสะสม: ${member.points} คะแนน`;
-
-  const avGrid = document.getElementById("avatarPresetGrid");
-  avGrid.innerHTML = "";
-  AVATAR_PRESETS.forEach((av) => {
-    const isUnlocked = member.unlockedAvatars.includes(av.id);
-    const isEquipped = (pendingAvatarSrc || member.avatarSrc) === av.src;
-    const card = document.createElement("div");
-    card.className = "cosmetic-card" + (isEquipped ? " equipped" : "");
-    card.innerHTML = `
-      <div style="display:flex; align-items:center; gap:8px;">
-        <img src="${av.src}" alt="${av.label}" style="width:34px; height:34px; border-radius:50%;" />
-        <strong>${av.label}</strong>
-      </div>
-      <div style="color:var(--muted); font-size:0.76rem;">
-        ${isUnlocked ? "ปลดล็อกแล้ว" : `ใช้ ${av.costPts} คะแนน หรือ ${av.reqExp} EXP`}
-      </div>
-    `;
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = isEquipped ? "btn btn-primary btn-sm" : "btn btn-sm";
-    if (isEquipped) {
-      btn.textContent = "กำลังใช้งาน";
-    } else if (isUnlocked) {
-      btn.textContent = "สวมใส่";
-      btn.onclick = () => {
-        pendingAvatarSrc = av.src;
-        document.getElementById("profileAvatarUrl").value = av.src;
-        renderCosmeticsInModal(member);
-      };
-    } else {
-      btn.textContent = `ปลดล็อก (${av.costPts} Pts)`;
-      btn.onclick = () => {
-        if (member.exp >= av.reqExp || member.points >= av.costPts) {
-          if (member.exp < av.reqExp) member.points -= av.costPts;
-          member.unlockedAvatars.push(av.id);
-          pendingAvatarSrc = av.src;
-          document.getElementById("profileAvatarUrl").value = av.src;
-          saveState();
-          updateAuthUI();
-          renderCosmeticsInModal(member);
-        } else {
-          alert("คะแนนหรือ EXP ยังไม่ถึงเกณฑ์ปลดล็อก");
-        }
-      };
-    }
-    card.appendChild(btn);
-    avGrid.appendChild(card);
-  });
-
-  const frGrid = document.getElementById("framePresetGrid");
-  frGrid.innerHTML = "";
-  FRAME_PRESETS.forEach((fr) => {
-    const isUnlocked = member.unlockedFrames.includes(fr.id);
-    const isEquipped = member.frameId === fr.id;
-    const card = document.createElement("div");
-    card.className = "cosmetic-card" + (isEquipped ? " equipped" : "");
-    card.innerHTML = `
-      <strong>${fr.label}</strong>
-      <div style="color:var(--muted); font-size:0.76rem;">
-        ${isUnlocked ? "ปลดล็อกแล้ว" : `ใช้ ${fr.costPts} คะแนน หรือ ${fr.reqExp} EXP`}
-      </div>
-    `;
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = isEquipped ? "btn btn-primary btn-sm" : "btn btn-sm";
-    if (isEquipped) {
-      btn.textContent = "กำลังใช้งาน";
-    } else if (isUnlocked) {
-      btn.textContent = "สวมใส่";
-      btn.onclick = () => {
-        member.frameId = fr.id;
-        saveState();
-        updateAuthUI();
-        renderCosmeticsInModal(member);
-      };
-    } else {
-      btn.textContent = `ปลดล็อก (${fr.costPts} Pts)`;
-      btn.onclick = () => {
-        if (member.exp >= fr.reqExp || member.points >= fr.costPts) {
-          if (member.exp < fr.reqExp) member.points -= fr.costPts;
-          member.unlockedFrames.push(fr.id);
-          member.frameId = fr.id;
-          saveState();
-          updateAuthUI();
-          renderCosmeticsInModal(member);
-        } else {
-          alert("คะแนนหรือ EXP ยังไม่ถึงเกณฑ์ปลดล็อก");
-        }
-      };
-    }
-    card.appendChild(btn);
-    frGrid.appendChild(card);
-  });
-
-  const tiGrid = document.getElementById("titlePresetGrid");
-  tiGrid.innerHTML = "";
-  TITLE_PRESETS.forEach((ti) => {
-    const isUnlocked = member.unlockedTitles.includes(ti.id);
-    const isEquipped = member.titleLabel === ti.label;
-    const card = document.createElement("div");
-    card.className = "cosmetic-card" + (isEquipped ? " equipped" : "");
-    card.innerHTML = `
-      <strong>${ti.label}</strong>
-      <div style="color:var(--muted); font-size:0.76rem;">
-        ${isUnlocked ? "ปลดล็อกแล้ว" : `ใช้ ${ti.costPts} คะแนน หรือ ${ti.reqExp} EXP`}
-      </div>
-    `;
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = isEquipped ? "btn btn-primary btn-sm" : "btn btn-sm";
-    if (isEquipped) {
-      btn.textContent = "กำลังใช้งาน";
-    } else if (isUnlocked) {
-      btn.textContent = "สวมใส่";
-      btn.onclick = () => {
-        member.titleLabel = ti.label;
-        saveState();
-        updateAuthUI();
-        renderCosmeticsInModal(member);
-      };
-    } else {
-      btn.textContent = `ปลดล็อก (${ti.costPts} Pts)`;
-      btn.onclick = () => {
-        if (member.exp >= ti.reqExp || member.points >= ti.costPts) {
-          if (member.exp < ti.reqExp) member.points -= ti.costPts;
-          member.unlockedTitles.push(ti.id);
-          member.titleLabel = ti.label;
-          saveState();
-          updateAuthUI();
-          renderCosmeticsInModal(member);
-        } else {
-          alert("คะแนนหรือ EXP ยังไม่ถึงเกณฑ์ปลดล็อก");
-        }
-      };
-    }
-    card.appendChild(btn);
-    tiGrid.appendChild(card);
-  });
-}
-
-document.getElementById("openProfileSettingsBtn").onclick = () => {
-  const member = getCurrentMember();
-  if (!member) return;
-  pendingAvatarSrc = member.avatarSrc;
-  document.getElementById("profileDisplayName").value = member.displayName;
-  document.getElementById("profileNewPass").value = "";
-  document.getElementById("profileAvatarUrl").value = member.avatarSrc;
-  document.getElementById("profileAvatarFile").value = "";
-  renderCosmeticsInModal(member);
-  document.getElementById("profileModal").showModal();
-};
-
-document.getElementById("profileAvatarUrl").addEventListener("input", (e) => {
-  const val = e.target.value.trim();
-  if (val) pendingAvatarSrc = val;
-});
-
-document.getElementById("profileAvatarFile").addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    pendingAvatarSrc = reader.result;
-    document.getElementById("profileAvatarUrl").value = reader.result;
-    const member = getCurrentMember();
-    if (member) renderCosmeticsInModal(member);
-  };
-  reader.readAsDataURL(file);
-});
-
-document.getElementById("cancelProfileBtn").onclick = () => {
-  document.getElementById("profileModal").close();
-};
-
-document.getElementById("profileForm").onsubmit = (e) => {
-  e.preventDefault();
-  const member = getCurrentMember();
-  if (!member) return;
-  const newName = document.getElementById("profileDisplayName").value.trim();
-  const newPass = document.getElementById("profileNewPass").value;
-  const urlInput = document.getElementById("profileAvatarUrl").value.trim();
-
-  if (newName) member.displayName = newName;
-  if (newPass) member.password = newPass;
-  if (urlInput) {
-    member.avatarSrc = urlInput;
-  } else if (pendingAvatarSrc) {
-    member.avatarSrc = pendingAvatarSrc;
-  }
-
-  saveState();
-  updateAuthUI();
-  document.getElementById("profileModal").close();
-};
-
-// สลับแท็บล็อกอินผู้ใช้ทั่วไป vs แอดมิน
-document.getElementById("tabUserBtn").onclick = () => {
-  document.getElementById("tabUserBtn").classList.add("active");
-  document.getElementById("tabAdminBtn").classList.remove("active");
-  document.getElementById("userAuthForm").style.display = "block";
-  document.getElementById("adminAuthForm").style.display = "none";
-};
-
-document.getElementById("tabAdminBtn").onclick = () => {
-  document.getElementById("tabAdminBtn").classList.add("active");
-  document.getElementById("tabUserBtn").classList.remove("active");
-  document.getElementById("adminAuthForm").style.display = "block";
-  document.getElementById("userAuthForm").style.display = "none";
-};
-
-document.getElementById("authBtn").onclick = () => {
-  if (currentRole !== "guest") {
-    currentRole = "guest";
-    currentUsername = "";
-    sessionStorage.removeItem(SESSION_ROLE_KEY);
-    sessionStorage.removeItem(SESSION_USER_KEY);
-    updateAuthUI();
-  } else {
-    document.getElementById("userAuthForm").reset();
-    document.getElementById("adminAuthForm").reset();
-    document.getElementById("memberError").style.display = "none";
-    document.getElementById("adminError").style.display = "none";
-    document.getElementById("loginModal").showModal();
-  }
-};
-
-document.querySelectorAll(".close-login-btn").forEach((btn) => {
-  btn.onclick = () => document.getElementById("loginModal").close();
-});
-
-document.getElementById("memberRegisterBtn").onclick = () => { memberSubmitMode = "register"; };
-document.getElementById("memberLoginBtn").onclick = () => { memberSubmitMode = "login"; };
-
-document.getElementById("userAuthForm").onsubmit = (e) => {
-  e.preventDefault();
-  const username = document.getElementById("memberUser").value.trim();
-  const password = document.getElementById("memberPass").value;
-  const errEl = document.getElementById("memberError");
-  let existing = state.users.find((u) => u.username.toLowerCase() === username.toLowerCase());
-
-  if (memberSubmitMode === "register") {
-    if (existing) {
-      errEl.textContent = "ชื่อผู้ใช้นี้มีในระบบแล้ว กรุณากดเข้าสู่ระบบ";
-      errEl.style.display = "block";
-      return;
-    }
-    existing = normalizeUser({
-      username,
-      displayName: username,
-      password,
-      points: 0,
-      exp: 0,
-      isVip: false
-    });
-    state.users.push(existing);
-    saveState();
-  } else {
-    if (!existing || existing.password !== password) {
-      errEl.textContent = "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง (หากยังไม่มีบัญชี ให้กดสมัครสมาชิกใหม่)";
-      errEl.style.display = "block";
-      return;
-    }
-  }
-
-  currentRole = "user";
-  currentUsername = existing.username;
-  sessionStorage.setItem(SESSION_ROLE_KEY, "user");
-  sessionStorage.setItem(SESSION_USER_KEY, existing.username);
-  updateAuthUI();
-  document.getElementById("loginModal").close();
-};
-
-document.getElementById("adminAuthForm").onsubmit = (e) => {
-  e.preventDefault();
-  const u = document.getElementById("adminUserInput").value.trim();
-  const p = document.getElementById("adminPassInput").value;
-  if (u === state.settings.adminUser && p === state.settings.adminPass) {
-    currentRole = "admin";
-    currentUsername = u;
-    sessionStorage.setItem(SESSION_ROLE_KEY, "admin");
-    sessionStorage.setItem(SESSION_USER_KEY, u);
-    updateAuthUI();
-    document.getElementById("loginModal").close();
-  } else {
-    document.getElementById("adminError").style.display = "block";
-  }
-};
-
-// ระบบขอมอดแปลไทยเกมต่อไป
-document.getElementById("openRequestBtn").onclick = () => {
-  const member = getCurrentMember();
-  if (!member) return;
-  document.getElementById("requestForm").reset();
-  document.getElementById("requestError").style.display = "none";
-  document.getElementById("requestCostHint").textContent =
-    `คะแนนปัจจุบันของคุณ: ${member.points} คะแนน • ใช้ ${state.settings.requestCost} คะแนนต่อ 1 คำขอ`;
-  document.getElementById("requestModal").showModal();
-};
-
-document.getElementById("cancelRequestBtn").onclick = () => {
-  document.getElementById("requestModal").close();
-};
-
-document.getElementById("requestForm").onsubmit = (e) => {
-  e.preventDefault();
-  const member = getCurrentMember();
-  const cost = Number(state.settings.requestCost);
-  if (!member || member.points < cost) {
-    document.getElementById("requestError").style.display = "block";
-    return;
-  }
-
-  member.points -= cost;
-  state.requests.unshift({
-    id: "req-" + Date.now(),
-    username: member.username,
-    game: document.getElementById("reqGameName").value.trim(),
-    ref: document.getElementById("reqModRef").value.trim(),
-    note: document.getElementById("reqNote").value.trim(),
-    status: "รอดำเนินการ"
-  });
-
-  saveState();
-  updateAuthUI();
-  document.getElementById("requestModal").close();
-  alert("ส่งคำขอมอดแปลไทยเรียบร้อยแล้ว!");
-};
-
-document.getElementById("openAddModBtn").onclick = () => openEditorModal(null);
-document.getElementById("cancelEditorBtn").onclick = () => document.getElementById("editorModal").close();
-document.getElementById("closeDetailBtn").onclick = () => document.getElementById("detailModal").close();
-
-document.getElementById("modForm").onsubmit = (e) => {
-  e.preventDefault();
-  if (currentRole !== "admin") return;
-  const id = document.getElementById("modId").value;
-  const payload = {
-    name: document.getElementById("modName").value.trim(),
-    game: document.getElementById("modGame").value.trim(),
-    category: document.getElementById("modCategory").value,
-    desc: document.getElementById("modDesc").value.trim(),
-    install: document.getElementById("modInstall").value.trim(),
-    url: document.getElementById("modUrl").value.trim()
-  };
-
-  if (id) {
-    const idx = state.mods.findIndex((m) => m.id === id);
-    if (idx !== -1) state.mods[idx] = { ...state.mods[idx], ...payload };
-  } else {
-    state.mods.unshift({
-      id: "mod-" + Date.now(),
-      ...payload,
-      downloads: 0,
-      createdAt: Date.now()
-    });
-  }
-
-  saveState();
-  renderMods();
-  document.getElementById("editorModal").close();
-};
-
-["cfgTitle", "cfgSubtitle", "cfgAnnouncement", "cfgAccent", "cfgPtsPerDl", "cfgExpPerDl", "cfgVipThreshold", "cfgRequestCost", "cfgAdminUser", "cfgAdminPass"].forEach((inputId) => {
-  document.getElementById(inputId).addEventListener("input", () => {
-    if (currentRole !== "admin") return;
-    state.settings.title = document.getElementById("cfgTitle").value;
-    state.settings.subtitle = document.getElementById("cfgSubtitle").value;
-    state.settings.announcement = document.getElementById("cfgAnnouncement").value;
-    state.settings.accent = document.getElementById("cfgAccent").value;
-    state.settings.pointsPerDownload = Math.max(0, Number(document.getElementById("cfgPtsPerDl").value) || 0);
-    state.settings.expPerDownload = Math.max(0, Number(document.getElementById("cfgExpPerDl").value) || 0);
-    state.settings.vipThreshold = Math.max(1, Number(document.getElementById("cfgVipThreshold").value) || 100);
-    state.settings.requestCost = Math.max(1, Number(document.getElementById("cfgRequestCost").value) || 50);
-    const newUser = document.getElementById("cfgAdminUser").value.trim();
-    const newPass = document.getElementById("cfgAdminPass").value;
-    if (newUser) state.settings.adminUser = newUser;
-    if (newPass) state.settings.adminPass = newPass;
-    saveState();
-    applySettings();
-  });
-});
-
-document.getElementById("exportJsonBtn").onclick = () => {
-  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "thai-mod-hub-backup.json";
-  a.click();
-  URL.revokeObjectURL(url);
-};
-
-document.getElementById("importJsonInput").onchange = (e) => {
-  if (currentRole !== "admin") return;
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const parsed = JSON.parse(reader.result);
-      if (!Array.isArray(parsed.mods) || !parsed.settings) {
-        alert("โครงสร้างไฟล์ JSON ไม่ถูกต้อง");
-        return;
-      }
-      state = {
-        settings: { ...DEFAULT_STATE.settings, ...parsed.settings },
-        users: Array.isArray(parsed.users) ? parsed.users.map(normalizeUser) : [],
-        requests: Array.isArray(parsed.requests) ? parsed.requests : [],
-        mods: parsed.mods
-      };
+  // นับยอดดาวน์โหลด
+  document.getElementById("modList").addEventListener("click", (e) => {
+    const link = e.target.closest("[data-download-mod]");
+    if (!link) return;
+    const mod = state.mods.find((m) => m.id === link.dataset.downloadMod);
+    if (mod) {
+      mod.downloads = (mod.downloads || 0) + 1;
       saveState();
-      applySettings();
-      updateAuthUI();
-      renderCategories();
       renderMods();
-      renderAdminPanels();
-      alert("นำเข้าข้อมูลเรียบร้อยแล้ว");
-    } catch {
-      alert("ไม่สามารถอ่านไฟล์ JSON ได้");
     }
-  };
-  reader.readAsText(file);
-  e.target.value = "";
-};
+  });
 
-document.getElementById("resetDefaultBtn").onclick = () => {
-  if (currentRole !== "admin") return;
-  if (!confirm("รีเซ็ตข้อมูลทั้งหมดกลับเป็นค่าเริ่มต้น?")) return;
-  state = structuredClone(DEFAULT_STATE);
-  saveState();
-  applySettings();
-  updateAuthUI();
-  renderCategories();
+  // แจ้งบัค
+  document.getElementById("openBugModalBtn").addEventListener("click", () => {
+    document.getElementById("bugModal").classList.remove("hidden");
+    renderBugAdminList();
+  });
+
+  document.getElementById("closeBugModalBtn").addEventListener("click", () => {
+    document.getElementById("bugModal").classList.add("hidden");
+  });
+
+  document.getElementById("bugReportForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const target = document.getElementById("bugTargetInput").value.trim();
+    const description = document.getElementById("bugDescInput").value.trim();
+    if (!target || !description) return;
+    const user = getCurrentUser();
+
+    state.bugReports.unshift({
+      id: "bug-" + Date.now(),
+      target,
+      description,
+      author: user ? user.username : "ผู้เยี่ยมชม",
+      createdAt: new Date().toLocaleString("th-TH")
+    });
+    saveState();
+    e.target.reset();
+    renderBugAdminList();
+    alert("ส่งรายงานบัคเรียบร้อยแล้ว ขอบคุณที่ช่วยแจ้งครับ");
+  });
+
+  document.getElementById("bugAdminList").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-delete-bug]");
+    if (!btn) return;
+    state.bugReports = state.bugReports.filter((b) => b.id !== btn.dataset.deleteBug);
+    saveState();
+    renderBugAdminList();
+  });
+
+  // กระทู้พูดคุยสอบถาม
+  document.getElementById("toggleNewThreadBtn").addEventListener("click", () => {
+    document.getElementById("newThreadForm").classList.toggle("hidden");
+  });
+
+  document.getElementById("newThreadForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const title = document.getElementById("threadTitleInput").value.trim();
+    const body = document.getElementById("threadBodyInput").value.trim();
+    if (!title || !body) return;
+    const user = getCurrentUser();
+
+    state.threads.unshift({
+      id: "th-" + Date.now(),
+      title,
+      body,
+      author: user ? user.username : "สมาชิก",
+      createdAt: new Date().toLocaleString("th-TH"),
+      replies: []
+    });
+    saveState();
+    e.target.reset();
+    e.target.classList.add("hidden");
+    renderThreads();
+  });
+
+  document.getElementById("threadList").addEventListener("submit", (e) => {
+    const form = e.target.closest(".reply-form");
+    if (!form) return;
+    e.preventDefault();
+    const input = form.querySelector(".reply-input");
+    const text = input.value.trim();
+    if (!text) return;
+    const user = getCurrentUser();
+    const thread = state.threads.find((t) => t.id === form.dataset.threadId);
+    if (!thread) return;
+
+    thread.replies.push({
+      id: "rp-" + Date.now(),
+      author: user ? user.username : "สมาชิก",
+      text,
+      createdAt: new Date().toLocaleString("th-TH")
+    });
+    saveState();
+    renderThreads();
+  });
+
+  // Export ข้อมูลสำรอง
+  document.getElementById("exportDataBtn").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "thai-mod-hub-backup.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+}
+
+function renderAll() {
+  renderHeaderAndProfile();
+  renderSidebars();
   renderMods();
-  renderAdminPanels();
-};
+  renderThreads();
+  renderAdminLists();
+  renderBugAdminList();
+}
 
-document.getElementById("searchInput").addEventListener("input", renderMods);
-document.getElementById("sortSelect").addEventListener("change", renderMods);
-
-renderRankTiers();
-applySettings();
-updateAuthUI();
-renderCategories();
-renderMods();
+bindEvents();
+renderAll();

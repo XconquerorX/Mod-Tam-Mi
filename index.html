@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta name="google-site-verification" content="rxh_BEmrxqbp4KW6kVt7iecRztrvOXPbIbHPFUIjPNU" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Thai Mod Hub — ศูนย์รวมมอดเกมแปลไทย</title>
+
   <!-- SEO Meta Tags -->
   <meta name="description" content="Thai Mod Hub ศูนย์รวมมอดเกมแปลไทย อ่านง่าย ใช้งานสะดวก ดาวน์โหลดฟรี พร้อมระบบสะสมคะแนน อัปยศ และขอมอดแปลไทยเกมต่อไป" />
   <meta name="keywords" content="มอดแปลไทย, มอดเกมแปลไทย, แจกมอดภาษาไทย, Thai Mod Hub, โหลดมอดแปลไทย, Stardew Valley แปลไทย, Project Zomboid แปลไทย" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://xconquerorx.github.io/Mod-Tam-Mi/" />
+  <meta name="google-site-verification" content="rxh_BEmrxqbp4KW6kVt7iecRztrvOXPbIbHPFUIjPNU" />
 
-  <!-- Open Graph (สำหรับแสดงตัวอย่างสวยงามเวลาแชร์ลิงก์ลง Facebook / Discord) -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Thai Mod Hub — ศูนย์รวมมอดเกมแปลไทย" />
   <meta property="og:description" content="รวมมอดเกมแปลไทย อ่านง่าย ใช้งานสะดวก ค้นหาง่าย ดาวน์โหลดได้ทันที" />
   <meta property="og:url" content="https://xconquerorx.github.io/Mod-Tam-Mi/" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Prompt:wght@500;600;700&display=swap" rel="stylesheet" />
@@ -23,130 +25,143 @@
 </head>
 <body>
   <div class="container">
-    <div id="announcementBar" class="announcement"></div>
+    <div id="announcementBar" class="announcement hidden"></div>
 
-    <header>
-      <!-- ซ้ายบน: เข้าสู่ระบบ / ออกจากระบบ -->
+    <header class="site-header">
       <div class="header-left">
-        <button id="authBtn" class="btn btn-primary">เข้าสู่ระบบ</button>
-        <button id="openRequestBtn" class="btn btn-vip" style="display:none;">ขอมอดแปลไทยเกมต่อไป</button>
-        <span id="adminBadge" class="role-badge">ผู้ดูแลระบบ (Admin)</span>
+        <button type="button" id="authBtn" class="btn btn-primary">เข้าสู่ระบบ</button>
+        <button type="button" id="openRequestBtn" class="btn btn-vip">ขอมอดแปลไทยเกมต่อไป</button>
+        <span id="adminBadge" class="role-badge hidden">ผู้ดูแลระบบ (Admin)</span>
       </div>
 
-      <!-- ตรงกลาง: ชื่อเว็บและคำอธิบาย -->
       <div class="header-center">
         <h1 id="siteTitle" class="brand-title">Thai Mod Hub</h1>
-        <p id="siteSubtitle" class="brand-sub">รวมมอดเกมแปลไทย อ่านง่าย ใช้งานสะดวก</p>
+        <p id="siteSubtitle" class="brand-sub">รวมมอดเกมแปลไทย อ่านง่าย ใช้งานสะดวก ดาวน์โหลดฟรี</p>
       </div>
 
-      <!-- ขวาบน: โปรไฟล์ รูปโปรไฟล์ + กรอบรูป ตั้งค่าโปรไฟล์ คะแนนสะสม EXP และยศ -->
       <div class="header-right">
         <div id="guestProfileBox" class="profile-box">
           <div class="profile-header-row">
             <div class="avatar-frame frame-none">
-              <img id="guestAvatarImg" alt="Guest Avatar" />
+              <img id="guestAvatarImg" src="" alt="Guest Avatar" />
             </div>
             <div class="profile-info-col">
-              <strong style="font-size:0.92rem;">โปรไฟล์ผู้เยี่ยมชม</strong>
-              <div style="font-size:0.8rem; color:var(--muted); margin-top:2px;">
-                ล็อกอินเพื่อสะสมคะแนน/EXP ปลดล็อกยศ และของตกแต่ง
-              </div>
+              <strong>โปรไฟล์ผู้เยี่ยมชม</strong>
+              <div class="muted small-text">ล็อกอินเพื่อสะสมคะแนน/EXP ปลดล็อกยศ และของตกแต่ง</div>
             </div>
           </div>
         </div>
 
-        <div id="userProfileBox" class="profile-box" style="display:none;">
+        <div id="userProfileBox" class="profile-box hidden">
           <div class="profile-header-row">
             <div id="userAvatarFrame" class="avatar-frame frame-none">
-              <img id="userAvatarImg" alt="User Avatar" />
+              <img id="userAvatarImg" src="" alt="User Avatar" />
             </div>
             <div class="profile-info-col">
               <div class="profile-top">
-                <strong id="currentUserName" style="font-size:0.95rem;">ผู้ใช้</strong>
-                <button type="button" id="openProfileSettingsBtn" class="btn btn-sm">ตั้งค่าโปรไฟล์</button>
+                <strong id="userNameText">-</strong>
+                <span id="userTitleBadge" class="title-badge">-</span>
               </div>
-              <div id="currentUserTitle" class="title-tag">ฉายา: นักผจญภัยหน้าใหม่</div>
-              <div class="profile-meta">
-                <span id="currentUserRank" class="rank-badge">Lv.1 มือใหม่หัดลงมอด</span>
-                <span id="currentUserExp" class="exp-tag">0 EXP</span>
-                <span id="currentUserPts" class="pts-tag">0 คะแนน</span>
-                <span id="currentUserVip" class="vip-tag">VIP</span>
+              <div id="userRankText" class="rank-text">-</div>
+              <div class="stats-row">
+                <span>คะแนน: <strong id="userPointsText">0</strong></span>
+                <span>EXP: <strong id="userExpText">0</strong></span>
               </div>
             </div>
           </div>
-        </div>
-
-        <div id="adminProfileBox" class="profile-box" style="display:none;">
-          <div class="profile-header-row">
-            <div class="avatar-frame frame-gold">
-              <img id="adminAvatarImg" alt="Admin Avatar" />
-            </div>
-            <div class="profile-info-col">
-              <strong style="font-size:0.92rem;">โปรไฟล์ผู้ดูแลระบบ</strong>
-              <div id="adminProfileName" style="font-size:0.8rem; color:var(--muted); margin-top:2px;"></div>
-            </div>
+          <div class="profile-actions">
+            <button type="button" id="openCosmeticBtn" class="btn btn-soft">แต่งโปรไฟล์</button>
+            <button type="button" id="toggleCmsBtn" class="btn btn-soft hidden">แผงแอดมิน (CMS)</button>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- แผงควบคุมผู้ดูแลระบบ -->
-    <section id="cmsPanel" class="cms-panel">
-      <strong>แผงควบคุมผู้ดูแลระบบ (Admin Panel)</strong>
-      <div class="cms-actions">
-        <button id="openAddModBtn" class="btn btn-primary">+ เพิ่มมอดแปลไทยใหม่</button>
-        <button id="exportJsonBtn" class="btn">Export ข้อมูล (.json)</button>
-        <label class="btn" style="margin:0;">
-          Import ข้อมูล (.json)
-          <input id="importJsonInput" type="file" accept=".json" hidden />
-        </label>
-        <button id="resetDefaultBtn" class="btn btn-danger">รีเซ็ตเป็นค่าเริ่มต้น</button>
+    <!-- สวิตช์สลับโหมดปกติ / 18+ และปุ่มแจ้งบัค -->
+    <div class="mode-and-actions">
+      <div class="content-mode-switch" role="group" aria-label="โหมดเนื้อหามอด">
+        <button type="button" id="modeNormalBtn" class="btn mode-btn active" data-mode="normal">มอดเกมปกติ</button>
+        <button type="button" id="modeAdultBtn" class="btn mode-btn adult" data-mode="18+">มอดเกม 18+</button>
       </div>
+      <div class="header-right-actions">
+        <button type="button" id="exportDataBtn" class="btn btn-soft">Export ข้อมูล</button>
+        <button type="button" id="openBugModalBtn" class="btn btn-danger-soft">แจ้งบัค</button>
+      </div>
+    </div>
 
-      <div class="site-settings-grid">
-        <div>
-          <label>ชื่อเว็บไซต์</label>
-          <input id="cfgTitle" type="text" />
-        </div>
-        <div>
-          <label>คำอธิบายสั้นใต้ชื่อเว็บ</label>
-          <input id="cfgSubtitle" type="text" />
-        </div>
-        <div>
-          <label>ข้อความประกาศด้านบน</label>
-          <input id="cfgAnnouncement" type="text" />
-        </div>
-        <div>
-          <label>สีหลักของธีม</label>
-          <input id="cfgAccent" type="color" style="height:42px; padding:4px;" />
-        </div>
-        <div>
-          <label>คะแนนต่อการโหลด 1 ครั้ง</label>
-          <input id="cfgPtsPerDl" type="number" min="0" />
-        </div>
-        <div>
-          <label>EXP ต่อการโหลด 1 ครั้ง</label>
-          <input id="cfgExpPerDl" type="number" min="0" />
-        </div>
-        <div>
-          <label>คะแนนขั้นต่ำ VIP / ค่าขอมอด</label>
-          <div style="display:flex; gap:6px;">
-            <input id="cfgVipThreshold" type="number" min="1" placeholder="VIP Pts" />
-            <input id="cfgRequestCost" type="number" min="1" placeholder="Req Pts" />
+    <!-- แผงผู้ดูแลระบบ (CMS): ลงมอดใส่รูป + ตั้งค่าแยกคะแนน/EXP + จัดการสมาชิก/คำขอ -->
+    <section id="cmsPanel" class="cms-panel hidden">
+      <h2>แผงควบคุมผู้ดูแลระบบ (CMS)</h2>
+
+      <div class="cms-grid">
+        <form id="modForm" class="card-box">
+          <h3>เพิ่ม / ลงมอดแปลไทยใหม่</h3>
+          <div class="form-group">
+            <label for="modTitleInput">ชื่อมอด / ชื่อเกม</label>
+            <input type="text" id="modTitleInput" placeholder="เช่น Stardew Valley แปลไทย" required />
           </div>
-        </div>
-        <div>
-          <label>ชื่อผู้ใช้แอดมิน / รหัสผ่านแอดมิน</label>
-          <div style="display:flex; gap:6px;">
-            <input id="cfgAdminUser" type="text" placeholder="User" />
-            <input id="cfgAdminPass" type="text" placeholder="Pass" />
+          <div class="form-group">
+            <label for="modCategoryInput">หมวดหมู่</label>
+            <input type="text" id="modCategoryInput" placeholder="เช่น RPG / Simulation / Survival" required />
           </div>
-        </div>
+          <div class="form-group">
+            <label for="modRatingInput">โหมดเนื้อหา</label>
+            <select id="modRatingInput">
+              <option value="normal">มอดเกมปกติ</option>
+              <option value="18+">มอดเกม 18+</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="modDescInput">รายละเอียดมอด</label>
+            <textarea id="modDescInput" rows="2" placeholder="รายละเอียดการแปล วิธีติดตั้ง หรือเวอร์ชัน..." required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="modUrlInput">ลิงก์ดาวน์โหลด</label>
+            <input type="url" id="modUrlInput" placeholder="https://..." required />
+          </div>
+          <div class="form-group">
+            <label for="modImageUrlInput">ลิงก์รูปภาพมอด (URL)</label>
+            <input type="url" id="modImageUrlInput" placeholder="https://..." />
+          </div>
+          <div class="form-group">
+            <label for="modImageFileInput">หรืออัปโหลดรูปภาพจากเครื่อง</label>
+            <input type="file" id="modImageFileInput" accept="image/*" />
+          </div>
+          <img id="modImagePreview" src="" alt="ตัวอย่างรูปมอด" class="mod-preview-img hidden" />
+          <button type="submit" class="btn btn-primary">บันทึกมอด</button>
+        </form>
+
+        <form id="cosmeticForm" class="card-box">
+          <h3>เพิ่มของตกแต่ง (แยกปลดล็อกด้วยคะแนน vs EXP)</h3>
+          <div class="form-group">
+            <label for="cosmeticTypeInput">ประเภท</label>
+            <select id="cosmeticTypeInput">
+              <option value="title">ฉายา (Title)</option>
+              <option value="frame">กรอบรูป (Frame)</option>
+              <option value="avatar">รูปโปรไฟล์ (Avatar)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="cosmeticNameInput">ชื่อของตกแต่ง / คลาสกรอบ / URL รูป</label>
+            <input type="text" id="cosmeticNameInput" placeholder="เช่น นักล่ามอด หรือ frame-gold" required />
+          </div>
+          <div class="unlock-split-fields">
+            <div class="form-group">
+              <label for="cosmeticReqPoints">ต้องใช้คะแนน (Points)</label>
+              <input type="number" id="cosmeticReqPoints" min="0" value="0" />
+            </div>
+            <div class="form-group">
+              <label for="cosmeticReqExp">หรือต้องใช้ EXP</label>
+              <input type="number" id="cosmeticReqExp" min="0" value="0" />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">เพิ่มของตกแต่ง</button>
+        </form>
       </div>
 
       <div class="admin-subgrid">
         <div class="admin-box">
-          <strong>จัดการสมาชิก / ให้คะแนน & EXP แยกกัน / ปรับ VIP</strong>
+          <strong>จัดการสมาชิก / ให้คะแนน & EXP แยกกัน</strong>
           <div id="adminUserList"></div>
         </div>
         <div class="admin-box">
@@ -156,13 +171,13 @@
       </div>
     </section>
 
+    <!-- เลย์เอาต์หลัก 3 คอลัมน์ -->
     <div class="main-layout">
-      <!-- ด้านซ้ายของเว็บ: Rank ผู้ใช้ที่มียศสูง / EXP สูงสุด + ผังยศ 7 ระดับ -->
       <aside class="sidebar left-sidebar">
         <div class="side-card">
           <div class="side-title">
-            <span>Rank ผู้ใช้ยศสูง</span>
-            <span style="font-size:0.78rem; color:var(--muted); font-weight:500;">เรียงตาม EXP</span>
+            <span>Rank ผู้ใช้ที่ EXP สูงสุด</span>
+            <span class="muted small-text">เรียงตาม EXP</span>
           </div>
           <div id="userRankList" class="rank-list"></div>
         </div>
@@ -175,221 +190,125 @@
         </div>
       </aside>
 
-      <!-- ตรงกลาง: ค้นหา หมวดหมู่ และรายการมอด -->
-      <div>
+      <main class="content-col">
         <div class="toolbar">
-          <div class="search-box">
-            <input id="searchInput" class="search-input" type="search" placeholder="ค้นหาชื่อมอด, ชื่อเกม หรือคำอธิบาย..." />
-          </div>
-          <div style="width: 200px;">
-            <select id="sortSelect">
-              <option value="newest">เรียงตาม: ล่าสุด</option>
-              <option value="downloads">เรียงตาม: ดาวน์โหลดเยอะสุด</option>
-            </select>
-          </div>
+          <input type="search" id="searchModInput" placeholder="ค้นหาชื่อมอดหรือหมวดหมู่..." />
+          <select id="categoryFilter">
+            <option value="all">ทุกหมวดหมู่</option>
+          </select>
         </div>
+        <div id="modList" class="mod-grid"></div>
+      </main>
 
-        <div id="categoryBar" class="categories"></div>
-        <main id="modGrid" class="grid"></main>
-      </div>
-
-      <!-- ด้านขวา: อันดับ 5 มอดยอดนิยม -->
-      <aside class="sidebar">
+      <aside class="sidebar right-sidebar">
         <div class="side-card">
-          <div class="side-title">
-            <span>Top 5 มอดยอดนิยม</span>
-            <span style="font-size:0.78rem; color:var(--muted); font-weight:500;">ยอดดาวน์โหลด</span>
-          </div>
-          <div id="topRankList" class="rank-list"></div>
-        </div>
-
-        <div class="side-card" style="background:var(--surface-soft); border-style:dashed;">
-          <div class="side-title" style="margin-bottom:6px;">
-            <span>วิธีรับคะแนน & EXP</span>
-          </div>
-          <p id="ruleSummaryText" style="margin:0; font-size:0.84rem; color:var(--muted);"></p>
+          <h3>กิจกรรม & ของตกแต่ง</h3>
+          <p class="muted small-text">ปลดล็อกของตกแต่งได้ทั้งจาก <strong>คะแนน</strong> และ <strong>EXP</strong> แยกเงื่อนไขกันชัดเจน</p>
+          <div id="cosmeticShopList" class="cosmetic-list"></div>
         </div>
       </aside>
     </div>
+
+    <!-- ระบบกระทู้พูดคุยสอบถาม -->
+    <section id="forumSection" class="forum-section">
+      <div class="forum-header">
+        <div>
+          <h2>กระดานพูดคุย & สอบถาม</h2>
+          <p class="muted">สอบถามวิธีลงมอด พูดคุยแลกเปลี่ยน หรือแชร์ทริคกับสมาชิก</p>
+        </div>
+        <button type="button" id="toggleNewThreadBtn" class="btn btn-primary">+ ตั้งกระทู้ใหม่</button>
+      </div>
+
+      <form id="newThreadForm" class="card-box hidden">
+        <div class="form-group">
+          <label for="threadTitleInput">หัวข้อกระทู้</label>
+          <input type="text" id="threadTitleInput" placeholder="เช่น ลงมอดแปลไทยแล้วเด้ง ต้องแก้ยังไงครับ" required />
+        </div>
+        <div class="form-group">
+          <label for="threadBodyInput">รายละเอียด</label>
+          <textarea id="threadBodyInput" rows="3" placeholder="พิมพ์รายละเอียดคำถามหรือเรื่องที่อยากพูดคุย..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">โพสต์กระทู้</button>
+      </form>
+
+      <div id="threadList" class="thread-list"></div>
+    </section>
   </div>
 
-  <!-- หน้าต่างตั้งค่าโปรไฟล์และปลดล็อกของตกแต่ง -->
-  <dialog id="profileModal">
-    <form id="profileForm" method="dialog">
-      <h2 style="margin-bottom:10px;">ตั้งค่าโปรไฟล์ & ของตกแต่ง</h2>
-      <div class="hint-box" id="profileStatsSummary"></div>
-
-      <div class="form-row">
-        <label>ชื่อที่แสดงในโปรไฟล์</label>
-        <input id="profileDisplayName" type="text" required />
+  <!-- Modal เข้าสู่ระบบ -->
+  <div id="authModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3>เข้าสู่ระบบ / สมัครสมาชิก</h3>
+        <button type="button" id="closeAuthModalBtn" class="btn-close">✕</button>
       </div>
-
-      <div class="form-row">
-        <label>เปลี่ยนรหัสผ่านใหม่ (เว้นว่างหากไม่ต้องการเปลี่ยน)</label>
-        <input id="profileNewPass" type="password" placeholder="รหัสผ่านใหม่" />
-      </div>
-
-      <div class="form-row">
-        <label>รูปโปรไฟล์แบบกำหนดเอง (อัปโหลดไฟล์รูป หรือวางลิงก์รูปภาพ)</label>
-        <div style="display:flex; gap:8px; align-items:center;">
-          <input id="profileAvatarUrl" type="text" placeholder="https://... หรืออัปโหลดไฟล์ด้านขวา" />
-          <label class="btn btn-sm" style="margin:0; white-space:nowrap;">
-            อัปโหลดรูป
-            <input id="profileAvatarFile" type="file" accept="image/*" hidden />
-          </label>
+      <form id="authForm">
+        <div class="form-group">
+          <label for="authUsernameInput">ชื่อผู้ใช้ (Username)</label>
+          <input type="text" id="authUsernameInput" required />
         </div>
-      </div>
-
-      <div class="form-row">
-        <label>ปลดล็อกและเลือก "รูปโปรไฟล์" (Avatar Preset)</label>
-        <div id="avatarPresetGrid" class="cosmetic-grid"></div>
-      </div>
-
-      <div class="form-row">
-        <label>ปลดล็อกและเลือก "กรอบรูป" (Avatar Frame)</label>
-        <div id="framePresetGrid" class="cosmetic-grid"></div>
-      </div>
-
-      <div class="form-row">
-        <label>ปลดล็อกและเลือก "ฉายา" (Title)</label>
-        <div id="titlePresetGrid" class="cosmetic-grid"></div>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" id="cancelProfileBtn" class="btn">ยกเลิก</button>
-        <button type="submit" class="btn btn-primary">บันทึกโปรไฟล์</button>
-      </div>
-    </form>
-  </dialog>
-
-  <!-- หน้าต่างเข้าสู่ระบบ (แยกผู้ใช้ทั่วไป กับ ผู้ดูแลระบบ) -->
-  <dialog id="loginModal">
-    <div class="tabs">
-      <button type="button" id="tabUserBtn" class="tab-btn active">ผู้ใช้งานทั่วไป (Member)</button>
-      <button type="button" id="tabAdminBtn" class="tab-btn">ผู้ดูแลระบบ (Admin)</button>
+        <div class="form-group">
+          <label for="authPasswordInput">รหัสผ่าน</label>
+          <input type="password" id="authPasswordInput" required />
+        </div>
+        <button type="submit" class="btn btn-primary">เข้าสู่ระบบ</button>
+      </form>
     </div>
+  </div>
 
-    <form id="userAuthForm" method="dialog">
-      <div class="hint-box">
-        สมัครสมาชิกใหม่เริ่มต้นที่ <strong>0 คะแนน</strong> และ <strong>0 EXP</strong> — ดาวน์โหลดมอด/เกม ทำกิจกรรม หรือรับคะแนนจากแอดมิน/โดเนท เพื่ออัปยศและปลดล็อกของตกแต่ง
+  <!-- Modal ขอมอดแปลไทย -->
+  <div id="requestModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3>ขอมอดแปลไทยเกมต่อไป</h3>
+        <button type="button" id="closeRequestModalBtn" class="btn-close">✕</button>
       </div>
-      <div class="form-row">
-        <label>ชื่อผู้ใช้ (Username)</label>
-        <input id="memberUser" type="text" required />
-      </div>
-      <div class="form-row">
-        <label>รหัสผ่าน (Password)</label>
-        <input id="memberPass" type="password" required />
-      </div>
-      <p id="memberError" class="error-text">รหัสผ่านไม่ถูกต้องสำหรับชื่อผู้ใช้นี้</p>
-      <div class="modal-footer">
-        <button type="button" class="btn close-login-btn">ยกเลิก</button>
-        <button type="submit" id="memberRegisterBtn" class="btn">สมัครสมาชิกใหม่</button>
-        <button type="submit" id="memberLoginBtn" class="btn btn-primary">เข้าสู่ระบบผู้ใช้</button>
-      </div>
-    </form>
-
-    <form id="adminAuthForm" method="dialog" style="display:none;">
-      <div class="hint-box">
-        บัญชีแอดมินเริ่มต้น: <strong>admin</strong> / รหัสผ่าน: <strong>1234</strong>
-      </div>
-      <div class="form-row">
-        <label>ชื่อผู้ใช้แอดมิน</label>
-        <input id="adminUserInput" type="text" required />
-      </div>
-      <div class="form-row">
-        <label>รหัสผ่านแอดมิน</label>
-        <input id="adminPassInput" type="password" required />
-      </div>
-      <p id="adminError" class="error-text">ชื่อผู้ใช้หรือรหัสผ่านแอดมินไม่ถูกต้อง</p>
-      <div class="modal-footer">
-        <button type="button" class="btn close-login-btn">ยกเลิก</button>
-        <button type="submit" class="btn btn-primary">เข้าสู่ระบบแอดมิน</button>
-      </div>
-    </form>
-  </dialog>
-
-  <!-- หน้าต่างใช้คะแนนขอมอดแปลไทยเกมต่อไป -->
-  <dialog id="requestModal">
-    <form id="requestForm" method="dialog">
-      <h2 style="margin-bottom:8px;">ขอมอดแปลไทยเกมต่อไป</h2>
-      <div id="requestCostHint" class="hint-box"></div>
-      <div class="form-row">
-        <label>ชื่อเกมที่ต้องการให้แปลไทย</label>
-        <input id="reqGameName" type="text" placeholder="เช่น Stardew Valley, Project Zomboid..." required />
-      </div>
-      <div class="form-row">
-        <label>ชื่อมอดหรือลิงก์ต้นฉบับ (ถ้ามี)</label>
-        <input id="reqModRef" type="text" placeholder="ระบุชื่อมอดหรือลิงก์ CurseForge / Nexus" />
-      </div>
-      <div class="form-row">
-        <label>รายละเอียดเพิ่มเติม</label>
-        <textarea id="reqNote" rows="2" placeholder="อยากให้แปลส่วนไหนเป็นพิเศษ เช่น เควสต์ หรือคำอธิบายไอเทม"></textarea>
-      </div>
-      <p id="requestError" class="error-text">คะแนนสะสมของคุณยังไม่เพียงพอ</p>
-      <div class="modal-footer">
-        <button type="button" id="cancelRequestBtn" class="btn">ยกเลิก</button>
-        <button type="submit" class="btn btn-primary">ใช้คะแนนส่งคำขอ</button>
-      </div>
-    </form>
-  </dialog>
-
-  <!-- หน้าต่างดูรายละเอียดและดาวน์โหลด -->
-  <dialog id="detailModal">
-    <span id="detailCategory" class="badge"></span>
-    <h2 id="detailTitle"></h2>
-    <p id="detailGame" class="card-game"></p>
-    <p id="detailDesc" style="margin-top:12px;"></p>
-    <div style="background:var(--surface-soft); padding:12px 14px; border-radius:10px; margin-top:12px;">
-      <strong>วิธีติดตั้งมอดแปลไทย:</strong>
-      <p id="detailInstall" style="margin:6px 0 0; white-space:pre-line;"></p>
+      <form id="requestForm">
+        <div class="form-group">
+          <label for="requestGameInput">ชื่อเกมที่อยากให้แปลไทย</label>
+          <input type="text" id="requestGameInput" required />
+        </div>
+        <div class="form-group">
+          <label for="requestNoteInput">รายละเอียดเพิ่มเติม</label>
+          <textarea id="requestNoteInput" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-vip">ส่งคำขอมอด</button>
+      </form>
     </div>
-    <div class="modal-footer">
-      <button id="closeDetailBtn" class="btn">ปิด</button>
-      <a id="detailDownloadLink" class="btn btn-primary" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">ดาวน์โหลดมอด</a>
-    </div>
-  </dialog>
+  </div>
 
-  <!-- หน้าต่างเพิ่ม / แก้ไขมอด -->
-  <dialog id="editorModal">
-    <form id="modForm" method="dialog">
-      <h2 id="editorTitle" style="margin-bottom:14px;">เพิ่มมอดใหม่</h2>
-      <input type="hidden" id="modId" />
-      <div class="form-row">
-        <label>ชื่อมอดแปลไทย</label>
-        <input id="modName" type="text" required />
+  <!-- Modal แต่งโปรไฟล์ -->
+  <div id="cosmeticModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3>ปรับแต่งโปรไฟล์</h3>
+        <button type="button" id="closeCosmeticModalBtn" class="btn-close">✕</button>
       </div>
-      <div class="form-row">
-        <label>ชื่อเกม</label>
-        <input id="modGame" type="text" required />
+      <div id="cosmeticModalBody"></div>
+    </div>
+  </div>
+
+  <!-- Modal แจ้งบัค -->
+  <div id="bugModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3>แจ้งบัค / ปัญหาการใช้งาน</h3>
+        <button type="button" id="closeBugModalBtn" class="btn-close">✕</button>
       </div>
-      <div class="form-row">
-        <label>หมวดหมู่</label>
-        <select id="modCategory">
-          <option value="RPG">RPG</option>
-          <option value="Simulation">Simulation</option>
-          <option value="Survival">Survival</option>
-          <option value="UI & QoL">UI & QoL</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <label>คำอธิบายมอด</label>
-        <textarea id="modDesc" rows="3" required></textarea>
-      </div>
-      <div class="form-row">
-        <label>วิธีติดตั้ง</label>
-        <textarea id="modInstall" rows="3" required></textarea>
-      </div>
-      <div class="form-row">
-        <label>ลิงก์ดาวน์โหลด</label>
-        <input id="modUrl" type="url" placeholder="https://..." required />
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="cancelEditorBtn" class="btn">ยกเลิก</button>
-        <button type="submit" class="btn btn-primary">บันทึกมอด</button>
-      </div>
-    </form>
-  </dialog>
+      <form id="bugReportForm">
+        <div class="form-group">
+          <label for="bugTargetInput">ชื่อเกม / ชื่อมอด / หน้าเว็บที่พบ</label>
+          <input type="text" id="bugTargetInput" placeholder="เช่น หน้าดาวน์โหลด / มอดแปลไทย..." required />
+        </div>
+        <div class="form-group">
+          <label for="bugDescInput">อาการบัคที่พบ</label>
+          <textarea id="bugDescInput" rows="4" placeholder="อธิบายขั้นตอนที่เกิดบัค..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">ส่งรายงานบัค</button>
+      </form>
+      <div id="bugAdminList" class="bug-list"></div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>
