@@ -20,7 +20,7 @@ const DEFAULT_STATE = {
   settings: {
     siteTitle: "Thai Mod Hub",
     siteSubtitle: "รวมมอดเกมแปลไทย อ่านง่าย ใช้งานสะดวก ดาวน์โหลดฟรี",
-    announcement: "ยินดีต้อนรับสู่ Thai Mod Hub — สลับโหมดมอดปกติ/18+ และร่วมพูดคุยสอบถามได้ในกระดานด้านล่าง"
+    announcement: "ยินดีต้อนรับสู่ Thai Mod Hub — สลับโหมดมอดปกติ/18+ กู้คืนบัญชีได้ และเปิดหน้ากระทู้แยกได้"
   },
   contentMode: "normal",
   currentUserId: null,
@@ -30,6 +30,8 @@ const DEFAULT_STATE = {
       username: "admin",
       password: "123",
       role: "admin",
+      provider: "local",
+      socialKey: null,
       points: 999,
       exp: 2600,
       avatarSrc: DEFAULT_AVATAR,
@@ -44,6 +46,8 @@ const DEFAULT_STATE = {
       username: "player1",
       password: "123",
       role: "member",
+      provider: "local",
+      socialKey: null,
       points: 120,
       exp: 350,
       avatarSrc: DEFAULT_AVATAR,
@@ -100,6 +104,7 @@ const DEFAULT_STATE = {
       title: "กระดานพูดคุย & สอบถามการลงมอดแปลไทย",
       body: "ติดปัญหาลงมอดเกมไหน หรืออยากแนะนำมอดแปลไทย พิมพ์คุยกันตรงนี้ได้เลยครับ",
       author: "Admin",
+      authorId: "u-admin",
       createdAt: new Date().toLocaleString("th-TH"),
       replies: []
     }
@@ -110,10 +115,12 @@ let uploadedModImageDataUrl = "";
 
 function normalizeUser(u) {
   return {
-    id: u.id,
+    id: u.id || "u-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
     username: u.username,
-    password: u.password,
+    password: u.password || "",
     role: u.role || "member",
+    provider: u.provider || "local",
+    socialKey: u.socialKey || null,
     points: Number(u.points || 0),
     exp: Number(u.exp || 0),
     avatarSrc: u.avatarSrc || DEFAULT_AVATAR,
@@ -185,6 +192,99 @@ function formatUnlockRequirement(item) {
   return parts.length ? `ปลดล็อกด้วย: ${parts.join(" หรือ ")}` : "ปลดล็อกฟรี";
 }
 
+function renderThreads() {
+  const listEl = document.getElementById("threadList");
+  if (!listEl) return;
+  if (!state.threads.length) {
+    listEl.innerHTML = "<p class='muted'>ยังไม่มีกระทู้ เริ่มตั้งกระทู้แรกได้เลย</p>";
+    return;
+  }
+  listEl.innerHTML = state.threads
+    .map(
+      (t) => `
+      <article class="thread-card">
+        <h3>${t.title}</h3>
+        <div class="muted small-text">โดย ${t.author} ${t.authorId ? `(UserID: ${t.authorId})` : ""} · ${t.createdAt}</div>
+        <p>${t.body}</p>
+        <div>
+          ${(t.replies || [])
+            .map((r) => `<div class="reply-item"><strong>${r.author}:</strong> ${r.text} <span class="muted small-text">(${r.createdAt})</span></div>`)
+            .join("")}
+        </div>
+        <form class="reply-form" data-thread-id="${t.id}">
+          <input type="text" class="reply-input" placeholder="พิมพ์ข้อความตอบกลับ..." required />
+          <button type="submit" class="btn btn-primary">ตอบกลับ</button>
+        </form>
+      </article>`
+    )
+    .join("");
+}
+
+function bindForumEvents() {
+  const toggleBtn = document.getElementById("toggleNewThreadBtn");
+  const newForm = document.getElementById("newThreadForm");
+  const listEl = document.getElementById("threadList");
+
+  toggleBtn?.addEventListener("click", () => {
+    newForm?.classList.toggle("hidden");
+  });
+
+  newForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const title = document.getElementById("threadTitleInput")?.value.trim();
+    const body = document.getElementById("threadBodyInput")?.value.trim();
+    if (!title || !body) return;
+    const user = getCurrentUser();
+
+    state.threads.unshift({
+      id: "th-" + Date.now(),
+      title,
+      body,
+      author: user ? user.username : "สมาชิก",
+      authorId: user ? user.id : "guest",
+      createdAt: new Date().toLocaleString("th-TH"),
+      replies: []
+    });
+    saveState();
+    newForm.reset();
+    newForm.classList.add("hidden");
+    renderThreads();
+  });
+
+  listEl?.addEventListener("submit", (e) => {
+    const form = e.target.closest(".reply-form");
+    if (!form) return;
+    e.preventDefault();
+    const input = form.querySelector(".reply-input");
+    const text = input?.value.trim();
+    if (!text) return;
+    const user = getCurrentUser();
+    const thread = state.threads.find((t) => t.id === form.dataset.threadId);
+    if (!thread) return;
+
+    thread.replies.push({
+      id: "rp-" + Date.now(),
+      author: user ? user.username : "สมาชิก",
+      text,
+      createdAt: new Date().toLocaleString("th-TH")
+    });
+    saveState();
+    renderThreads();
+  });
+}
+
+function initForumPage() {
+  const badge = document.getElementById("forumUserBadge");
+  const user = getCurrentUser();
+  if (badge) {
+    badge.innerHTML = user
+      ? `ผู้ใช้: <strong>${user.username}</strong> <span class="userid-badge">ID: ${user.id}</span>`
+      : `กำลังใช้งานในฐานะผู้เยี่ยมชม · <a href="index.html">ไปหน้าล็อกอิน</a>`;
+  }
+  bindForumEvents();
+  renderThreads();
+}
+
 function renderHeaderAndProfile() {
   document.getElementById("siteTitle").textContent = state.settings.siteTitle;
   document.getElementById("siteSubtitle").textContent = state.settings.siteSubtitle;
@@ -225,6 +325,8 @@ function renderHeaderAndProfile() {
   userBox.classList.remove("hidden");
 
   document.getElementById("userNameText").textContent = user.username;
+  document.getElementById("userProviderBadge").textContent = user.provider || "local";
+  document.getElementById("userIdBadge").textContent = `ID: ${user.id}`;
   document.getElementById("userTitleBadge").textContent = user.titleLabel;
   document.getElementById("userRankText").textContent = getRankByExp(user.exp).name;
   document.getElementById("userPointsText").textContent = user.points;
@@ -247,7 +349,10 @@ function renderSidebars() {
     .map(
       (u, idx) => `
       <div class="rank-item">
-        <span>#${idx + 1} <strong>${u.username}</strong></span>
+        <div>
+          #${idx + 1} <strong>${u.username}</strong>
+          <div class="muted small-text">ID: ${u.id}</div>
+        </div>
         <span>${u.exp} EXP</span>
       </div>`
     )
@@ -319,33 +424,6 @@ function renderMods() {
     .join("");
 }
 
-function renderThreads() {
-  const listEl = document.getElementById("threadList");
-  if (!state.threads.length) {
-    listEl.innerHTML = "<p class='muted'>ยังไม่มีกระทู้ เริ่มตั้งกระทู้แรกได้เลย</p>";
-    return;
-  }
-  listEl.innerHTML = state.threads
-    .map(
-      (t) => `
-      <article class="thread-card">
-        <h3>${t.title}</h3>
-        <div class="muted small-text">โดย ${t.author} · ${t.createdAt}</div>
-        <p>${t.body}</p>
-        <div>
-          ${(t.replies || [])
-            .map((r) => `<div class="reply-item"><strong>${r.author}:</strong> ${r.text} <span class="muted small-text">(${r.createdAt})</span></div>`)
-            .join("")}
-        </div>
-        <form class="reply-form" data-thread-id="${t.id}">
-          <input type="text" class="reply-input" placeholder="พิมพ์ข้อความตอบกลับ..." required />
-          <button type="submit" class="btn btn-primary">ตอบกลับ</button>
-        </form>
-      </article>`
-    )
-    .join("");
-}
-
 function renderAdminLists() {
   const user = getCurrentUser();
   if (!user || user.role !== "admin") return;
@@ -353,14 +431,18 @@ function renderAdminLists() {
   document.getElementById("adminUserList").innerHTML = state.users
     .map(
       (u) => `
-      <div class="admin-row">
+      <div class="admin-user-card">
         <div>
           <strong>${u.username}</strong>
+          <span class="userid-badge">ID: ${u.id}</span>
+          <span class="provider-badge">${u.provider || "local"}</span>
           <div class="muted small-text">คะแนน: ${u.points} | EXP: ${u.exp}</div>
         </div>
-        <div class="header-right-actions">
-          <button type="button" class="btn btn-soft" data-adj-points="${u.id}">+20 แต้ม</button>
-          <button type="button" class="btn btn-soft" data-adj-exp="${u.id}">+50 EXP</button>
+        <div class="admin-grant-controls">
+          <input type="number" class="admin-grant-input" data-pts-input="${u.id}" value="20" step="1" aria-label="จำนวนคะแนน" />
+          <button type="button" class="btn btn-soft" data-grant-points="${u.id}">ให้คะแนน</button>
+          <input type="number" class="admin-grant-input" data-exp-input="${u.id}" value="50" step="1" aria-label="จำนวน EXP" />
+          <button type="button" class="btn btn-soft" data-grant-exp="${u.id}">ให้ EXP</button>
         </div>
       </div>`
     )
@@ -404,7 +486,7 @@ function renderBugAdminList() {
       : '<p class="muted small-text">ยังไม่มีรายงานบัค</p>');
 }
 
-function bindEvents() {
+function bindHomeEvents() {
   document.getElementById("authBtn").addEventListener("click", () => {
     if (getCurrentUser()) {
       state.currentUserId = null;
@@ -419,6 +501,38 @@ function bindEvents() {
     document.getElementById("authModal").classList.add("hidden");
   });
 
+  document.getElementById("authModal").addEventListener("click", (e) => {
+    const socialBtn = e.target.closest("[data-social-provider]");
+    if (!socialBtn) return;
+
+    const provider = socialBtn.dataset.socialProvider;
+    const customName = prompt(`เข้าสู่ระบบด้วย ${provider} — กรอกชื่อบัญชีที่ต้องการใช้:`, `${provider.toLowerCase()}_user`);
+    if (!customName || !customName.trim()) return;
+
+    const cleanName = customName.trim();
+    const accountKey = `${provider.toLowerCase()}:${cleanName.toLowerCase()}`;
+    let found = state.users.find((u) => u.socialKey === accountKey);
+
+    if (!found) {
+      found = normalizeUser({
+        id: "u-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
+        username: cleanName,
+        password: "",
+        role: "member",
+        provider,
+        socialKey: accountKey,
+        points: 20,
+        exp: 10
+      });
+      state.users.push(found);
+    }
+
+    state.currentUserId = found.id;
+    saveState();
+    document.getElementById("authModal").classList.add("hidden");
+    renderAll();
+  });
+
   document.getElementById("authForm").addEventListener("submit", (e) => {
     e.preventDefault();
     const username = document.getElementById("authUsernameInput").value.trim();
@@ -427,15 +541,16 @@ function bindEvents() {
 
     if (found) {
       if (found.password !== password) {
-        alert("รหัสผ่านไม่ถูกต้องครับ");
+        alert("รหัสผ่านไม่ถูกต้องครับ สามารถกด 'กู้คืนบัญชี' เพื่อตั้งรหัสผ่านใหม่ได้");
         return;
       }
     } else {
       found = normalizeUser({
-        id: "u-" + Date.now(),
+        id: "u-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
         username,
         password,
         role: "member",
+        provider: "local",
         points: 20,
         exp: 10
       });
@@ -447,6 +562,36 @@ function bindEvents() {
     e.target.reset();
     document.getElementById("authModal").classList.add("hidden");
     renderAll();
+  });
+
+  document.getElementById("openRecoverBtn").addEventListener("click", () => {
+    document.getElementById("recoverModal").classList.remove("hidden");
+  });
+
+  document.getElementById("closeRecoverModalBtn").addEventListener("click", () => {
+    document.getElementById("recoverModal").classList.add("hidden");
+  });
+
+  document.getElementById("recoverForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const identifier = document.getElementById("recoverIdentifierInput").value.trim();
+    const newPass = document.getElementById("recoverNewPassInput").value;
+    const target = state.users.find(
+      (u) => u.id.toLowerCase() === identifier.toLowerCase() || u.username.toLowerCase() === identifier.toLowerCase()
+    );
+
+    if (!target) {
+      alert("ไม่พบบัญชีที่ตรงกับ UserID หรือชื่อผู้ใช้ที่ระบุครับ");
+      return;
+    }
+
+    target.password = newPass;
+    state.currentUserId = target.id;
+    saveState();
+    e.target.reset();
+    document.getElementById("recoverModal").classList.add("hidden");
+    renderAll();
+    alert(`กู้คืนบัญชี ${target.username} (ID: ${target.id}) และตั้งรหัสผ่านใหม่เรียบร้อยแล้วครับ`);
   });
 
   document.getElementById("openRequestBtn").addEventListener("click", () => {
@@ -468,7 +613,7 @@ function bindEvents() {
       id: "req-" + Date.now(),
       game,
       note,
-      by: user ? user.username : "ผู้เยี่ยมชม"
+      by: user ? `${user.username} (${user.id})` : "ผู้เยี่ยมชม"
     });
     saveState();
     e.target.reset();
@@ -482,7 +627,6 @@ function bindEvents() {
     renderAdminLists();
   });
 
-  // รูปภาพในหน้าลงมอด
   const urlInput = document.getElementById("modImageUrlInput");
   const fileInput = document.getElementById("modImageFileInput");
   const preview = document.getElementById("modImagePreview");
@@ -583,27 +727,42 @@ function bindEvents() {
   });
 
   document.getElementById("adminUserList").addEventListener("click", (e) => {
-    const ptsBtn = e.target.closest("[data-adj-points]");
-    const expBtn = e.target.closest("[data-adj-exp]");
+    const ptsBtn = e.target.closest("[data-grant-points]");
+    const expBtn = e.target.closest("[data-grant-exp]");
+
     if (ptsBtn) {
-      const target = state.users.find((u) => u.id === ptsBtn.dataset.adjPoints);
+      const userId = ptsBtn.dataset.grantPoints;
+      const input = document.querySelector(`[data-pts-input="${userId}"]`);
+      const amount = Number(input?.value);
+      if (!Number.isFinite(amount) || amount === 0) {
+        alert("กรุณากรอกจำนวนคะแนนที่ไม่ใช่ 0 ครับ");
+        return;
+      }
+      const target = state.users.find((u) => u.id === userId);
       if (target) {
-        target.points += 20;
+        target.points = Number(target.points || 0) + amount;
         saveState();
         renderAll();
       }
     }
+
     if (expBtn) {
-      const target = state.users.find((u) => u.id === expBtn.dataset.adjExp);
+      const userId = expBtn.dataset.grantExp;
+      const input = document.querySelector(`[data-exp-input="${userId}"]`);
+      const amount = Number(input?.value);
+      if (!Number.isFinite(amount) || amount === 0) {
+        alert("กรุณากรอกจำนวน EXP ที่ไม่ใช่ 0 ครับ");
+        return;
+      }
+      const target = state.users.find((u) => u.id === userId);
       if (target) {
-        target.exp += 50;
+        target.exp = Math.max(0, Number(target.exp || 0) + amount);
         saveState();
         renderAll();
       }
     }
   });
 
-  // สลับโหมดมอดปกติ / 18+
   const switchMode = (targetMode) => {
     if (targetMode === "18+" && state.contentMode !== "18+") {
       const ok = confirm("โหมดนี้สำหรับมอดเกม 18+ ยืนยันว่ามีอายุตามเกณฑ์ที่กำหนดหรือไม่?");
@@ -618,11 +777,9 @@ function bindEvents() {
   document.getElementById("modeNormalBtn").addEventListener("click", () => switchMode("normal"));
   document.getElementById("modeAdultBtn").addEventListener("click", () => switchMode("18+"));
 
-  // ค้นหาและกรองหมวดหมู่
   document.getElementById("searchModInput").addEventListener("input", renderMods);
   document.getElementById("categoryFilter").addEventListener("change", renderMods);
 
-  // นับยอดดาวน์โหลด
   document.getElementById("modList").addEventListener("click", (e) => {
     const link = e.target.closest("[data-download-mod]");
     if (!link) return;
@@ -634,7 +791,6 @@ function bindEvents() {
     }
   });
 
-  // แจ้งบัค
   document.getElementById("openBugModalBtn").addEventListener("click", () => {
     document.getElementById("bugModal").classList.remove("hidden");
     renderBugAdminList();
@@ -655,7 +811,7 @@ function bindEvents() {
       id: "bug-" + Date.now(),
       target,
       description,
-      author: user ? user.username : "ผู้เยี่ยมชม",
+      author: user ? `${user.username} (${user.id})` : "ผู้เยี่ยมชม",
       createdAt: new Date().toLocaleString("th-TH")
     });
     saveState();
@@ -672,54 +828,6 @@ function bindEvents() {
     renderBugAdminList();
   });
 
-  // กระทู้พูดคุยสอบถาม
-  document.getElementById("toggleNewThreadBtn").addEventListener("click", () => {
-    document.getElementById("newThreadForm").classList.toggle("hidden");
-  });
-
-  document.getElementById("newThreadForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const title = document.getElementById("threadTitleInput").value.trim();
-    const body = document.getElementById("threadBodyInput").value.trim();
-    if (!title || !body) return;
-    const user = getCurrentUser();
-
-    state.threads.unshift({
-      id: "th-" + Date.now(),
-      title,
-      body,
-      author: user ? user.username : "สมาชิก",
-      createdAt: new Date().toLocaleString("th-TH"),
-      replies: []
-    });
-    saveState();
-    e.target.reset();
-    e.target.classList.add("hidden");
-    renderThreads();
-  });
-
-  document.getElementById("threadList").addEventListener("submit", (e) => {
-    const form = e.target.closest(".reply-form");
-    if (!form) return;
-    e.preventDefault();
-    const input = form.querySelector(".reply-input");
-    const text = input.value.trim();
-    if (!text) return;
-    const user = getCurrentUser();
-    const thread = state.threads.find((t) => t.id === form.dataset.threadId);
-    if (!thread) return;
-
-    thread.replies.push({
-      id: "rp-" + Date.now(),
-      author: user ? user.username : "สมาชิก",
-      text,
-      createdAt: new Date().toLocaleString("th-TH")
-    });
-    saveState();
-    renderThreads();
-  });
-
-  // Export ข้อมูลสำรอง
   document.getElementById("exportDataBtn").addEventListener("click", () => {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -735,10 +843,13 @@ function renderAll() {
   renderHeaderAndProfile();
   renderSidebars();
   renderMods();
-  renderThreads();
   renderAdminLists();
   renderBugAdminList();
 }
 
-bindEvents();
-renderAll();
+if (document.body.dataset.page === "forum") {
+  initForumPage();
+} else {
+  bindHomeEvents();
+  renderAll();
+}

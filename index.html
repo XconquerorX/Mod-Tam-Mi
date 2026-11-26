@@ -5,14 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Thai Mod Hub — ศูนย์รวมมอดเกมแปลไทย</title>
 
-  <!-- SEO Meta Tags -->
   <meta name="description" content="Thai Mod Hub ศูนย์รวมมอดเกมแปลไทย อ่านง่าย ใช้งานสะดวก ดาวน์โหลดฟรี พร้อมระบบสะสมคะแนน อัปยศ และขอมอดแปลไทยเกมต่อไป" />
   <meta name="keywords" content="มอดแปลไทย, มอดเกมแปลไทย, แจกมอดภาษาไทย, Thai Mod Hub, โหลดมอดแปลไทย, Stardew Valley แปลไทย, Project Zomboid แปลไทย" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://xconquerorx.github.io/Mod-Tam-Mi/" />
   <meta name="google-site-verification" content="rxh_BEmrxqbp4KW6kVt7iecRztrvOXPbIbHPFUIjPNU" />
 
-  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Thai Mod Hub — ศูนย์รวมมอดเกมแปลไทย" />
   <meta property="og:description" content="รวมมอดเกมแปลไทย อ่านง่าย ใช้งานสะดวก ค้นหาง่าย ดาวน์โหลดได้ทันที" />
@@ -23,14 +21,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Prompt:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body data-page="home">
   <div class="container">
     <div id="announcementBar" class="announcement hidden"></div>
 
     <header class="site-header">
       <div class="header-left">
         <button type="button" id="authBtn" class="btn btn-primary">เข้าสู่ระบบ</button>
+        <button type="button" id="openRecoverBtn" class="btn btn-soft">กู้คืนบัญชี</button>
         <button type="button" id="openRequestBtn" class="btn btn-vip">ขอมอดแปลไทยเกมต่อไป</button>
+        <a href="forum.html" target="_blank" rel="noopener noreferrer" class="btn btn-soft">เปิดหน้ากระทู้</a>
         <span id="adminBadge" class="role-badge hidden">ผู้ดูแลระบบ (Admin)</span>
       </div>
 
@@ -47,7 +47,7 @@
             </div>
             <div class="profile-info-col">
               <strong>โปรไฟล์ผู้เยี่ยมชม</strong>
-              <div class="muted small-text">ล็อกอินเพื่อสะสมคะแนน/EXP ปลดล็อกยศ และของตกแต่ง</div>
+              <div class="muted small-text">ล็อกอินเพื่อรับ UserID สะสมคะแนน/EXP ปลดล็อกยศ และของตกแต่ง</div>
             </div>
           </div>
         </div>
@@ -60,6 +60,8 @@
             <div class="profile-info-col">
               <div class="profile-top">
                 <strong id="userNameText">-</strong>
+                <span id="userProviderBadge" class="provider-badge">local</span>
+                <span id="userIdBadge" class="userid-badge">ID: -</span>
                 <span id="userTitleBadge" class="title-badge">-</span>
               </div>
               <div id="userRankText" class="rank-text">-</div>
@@ -71,13 +73,12 @@
           </div>
           <div class="profile-actions">
             <button type="button" id="openCosmeticBtn" class="btn btn-soft">แต่งโปรไฟล์</button>
-            <button type="button" id="toggleCmsBtn" class="btn btn-soft hidden">แผงแอดมิน (CMS)</button>
+            <button type="button" id="toggleCmsBtn" class="btn btn-primary hidden">แผงแอดมิน (CMS)</button>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- สวิตช์สลับโหมดปกติ / 18+ และปุ่มแจ้งบัค -->
     <div class="mode-and-actions">
       <div class="content-mode-switch" role="group" aria-label="โหมดเนื้อหามอด">
         <button type="button" id="modeNormalBtn" class="btn mode-btn active" data-mode="normal">มอดเกมปกติ</button>
@@ -89,7 +90,6 @@
       </div>
     </div>
 
-    <!-- แผงผู้ดูแลระบบ (CMS): ลงมอดใส่รูป + ตั้งค่าแยกคะแนน/EXP + จัดการสมาชิก/คำขอ -->
     <section id="cmsPanel" class="cms-panel hidden">
       <h2>แผงควบคุมผู้ดูแลระบบ (CMS)</h2>
 
@@ -161,7 +161,7 @@
 
       <div class="admin-subgrid">
         <div class="admin-box">
-          <strong>จัดการสมาชิก / ให้คะแนน & EXP แยกกัน</strong>
+          <strong>จัดการสมาชิก (แสดง UserID) / ให้คะแนน & EXP แบบกำหนดเอง</strong>
           <div id="adminUserList"></div>
         </div>
         <div class="admin-box">
@@ -171,7 +171,6 @@
       </div>
     </section>
 
-    <!-- เลย์เอาต์หลัก 3 คอลัมน์ -->
     <div class="main-layout">
       <aside class="sidebar left-sidebar">
         <div class="side-card">
@@ -208,31 +207,6 @@
         </div>
       </aside>
     </div>
-
-    <!-- ระบบกระทู้พูดคุยสอบถาม -->
-    <section id="forumSection" class="forum-section">
-      <div class="forum-header">
-        <div>
-          <h2>กระดานพูดคุย & สอบถาม</h2>
-          <p class="muted">สอบถามวิธีลงมอด พูดคุยแลกเปลี่ยน หรือแชร์ทริคกับสมาชิก</p>
-        </div>
-        <button type="button" id="toggleNewThreadBtn" class="btn btn-primary">+ ตั้งกระทู้ใหม่</button>
-      </div>
-
-      <form id="newThreadForm" class="card-box hidden">
-        <div class="form-group">
-          <label for="threadTitleInput">หัวข้อกระทู้</label>
-          <input type="text" id="threadTitleInput" placeholder="เช่น ลงมอดแปลไทยแล้วเด้ง ต้องแก้ยังไงครับ" required />
-        </div>
-        <div class="form-group">
-          <label for="threadBodyInput">รายละเอียด</label>
-          <textarea id="threadBodyInput" rows="3" placeholder="พิมพ์รายละเอียดคำถามหรือเรื่องที่อยากพูดคุย..." required></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">โพสต์กระทู้</button>
-      </form>
-
-      <div id="threadList" class="thread-list"></div>
-    </section>
   </div>
 
   <!-- Modal เข้าสู่ระบบ -->
@@ -242,6 +216,19 @@
         <h3>เข้าสู่ระบบ / สมัครสมาชิก</h3>
         <button type="button" id="closeAuthModalBtn" class="btn-close">✕</button>
       </div>
+
+      <div class="social-login-section">
+        <div class="muted small-text">เข้าสู่ระบบด่วนผ่านบัญชีโซเชียล</div>
+        <div class="social-login-grid">
+          <button type="button" class="btn social-btn social-google" data-social-provider="Google">Google</button>
+          <button type="button" class="btn social-btn social-facebook" data-social-provider="Facebook">Facebook</button>
+          <button type="button" class="btn social-btn social-discord" data-social-provider="Discord">Discord</button>
+          <button type="button" class="btn social-btn social-twitter" data-social-provider="Twitter">Twitter</button>
+        </div>
+      </div>
+
+      <div class="auth-divider"><span>หรือเข้าสู่ระบบด้วยบัญชีสมาชิก</span></div>
+
       <form id="authForm">
         <div class="form-group">
           <label for="authUsernameInput">ชื่อผู้ใช้ (Username)</label>
@@ -252,6 +239,27 @@
           <input type="password" id="authPasswordInput" required />
         </div>
         <button type="submit" class="btn btn-primary">เข้าสู่ระบบ</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal กู้คืนบัญชี -->
+  <div id="recoverModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3>กู้คืนบัญชีผู้ใช้</h3>
+        <button type="button" id="closeRecoverModalBtn" class="btn-close">✕</button>
+      </div>
+      <form id="recoverForm">
+        <div class="form-group">
+          <label for="recoverIdentifierInput">กรอก UserID หรือ ชื่อผู้ใช้ (Username)</label>
+          <input type="text" id="recoverIdentifierInput" placeholder="เช่น u-admin หรือ player1" required />
+        </div>
+        <div class="form-group">
+          <label for="recoverNewPassInput">ตั้งรหัสผ่านใหม่</label>
+          <input type="password" id="recoverNewPassInput" required />
+        </div>
+        <button type="submit" class="btn btn-primary">กู้คืนและเข้าสู่ระบบ</button>
       </form>
     </div>
   </div>

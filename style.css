@@ -11,7 +11,8 @@
   --vip-text: #b45309;
   --title-bg: #ede9fe;
   --title-text: #6d28d9;
-  --danger: #dc2626;
+  --userid-bg: #e0f2fe;
+  --userid-text: #0369a1;
   --radius: 14px;
 }
 
@@ -45,9 +46,10 @@ h1, h2, h3, .brand-title {
 }
 
 .container {
-  max-width: 1280px;
+  width: 100%;
+  max-width: 1560px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 16px 24px;
 }
 
 .announcement {
@@ -61,13 +63,13 @@ h1, h2, h3, .brand-title {
 
 .site-header {
   display: grid;
-  grid-template-columns: 1fr 1.3fr 1.2fr;
-  gap: 14px;
+  grid-template-columns: 1fr 1.2fr 1.3fr;
+  gap: 16px;
   align-items: center;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 16px;
+  padding: 16px 20px;
 }
 
 .header-left,
@@ -83,7 +85,7 @@ h1, h2, h3, .brand-title {
 }
 
 .brand-title {
-  font-size: 1.7rem;
+  font-size: 1.75rem;
 }
 
 .brand-sub {
@@ -96,7 +98,7 @@ h1, h2, h3, .brand-title {
   background: var(--surface-soft);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 10px 12px;
+  padding: 10px 14px;
 }
 
 .profile-header-row {
@@ -137,6 +139,24 @@ h1, h2, h3, .brand-title {
   flex-wrap: wrap;
 }
 
+.userid-badge {
+  background: var(--userid-bg);
+  color: var(--userid-text);
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.provider-badge {
+  background: #e2e8f0;
+  color: #334155;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
 .role-badge {
   background: #dbeafe;
   color: #1d4ed8;
@@ -172,6 +192,7 @@ h1, h2, h3, .brand-title {
   display: flex;
   gap: 8px;
   margin-top: 8px;
+  flex-wrap: wrap;
 }
 
 .btn {
@@ -183,6 +204,10 @@ h1, h2, h3, .brand-title {
   cursor: pointer;
   font-family: inherit;
   font-size: 0.9rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn:hover {
@@ -249,7 +274,7 @@ h1, h2, h3, .brand-title {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 14px;
+  padding: 16px;
   margin-top: 12px;
 }
 
@@ -291,8 +316,8 @@ h1, h2, h3, .brand-title {
 
 .main-layout {
   display: grid;
-  grid-template-columns: 260px 1fr 270px;
-  gap: 14px;
+  grid-template-columns: 240px minmax(0, 1fr) 250px;
+  gap: 16px;
   align-items: start;
   margin-top: 12px;
 }
@@ -309,8 +334,8 @@ h1, h2, h3, .brand-title {
 
 .mod-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 14px;
 }
 
 .mod-card {
@@ -353,6 +378,80 @@ h1, h2, h3, .brand-title {
   padding: 8px 0;
   border-bottom: 1px solid var(--surface-soft);
   font-size: 0.88rem;
+}
+
+.admin-user-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--surface-soft);
+}
+
+.admin-grant-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.admin-grant-input {
+  width: 84px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  background: #fff;
+  color: var(--text);
+}
+
+.social-login-section {
+  margin-bottom: 12px;
+}
+
+.social-login-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.social-btn {
+  font-weight: 600;
+}
+
+.social-google {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+
+.social-facebook {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.social-discord {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #4338ca;
+}
+
+.social-twitter {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+  color: #0369a1;
+}
+
+.auth-divider {
+  text-align: center;
+  border-top: 1px solid var(--border);
+  margin: 14px 0 12px;
+  padding-top: 10px;
+  font-size: 0.82rem;
+  color: var(--muted);
 }
 
 .forum-header {
@@ -423,7 +522,7 @@ h1, h2, h3, .brand-title {
   cursor: pointer;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1024px) {
   .site-header,
   .main-layout {
     grid-template-columns: 1fr;

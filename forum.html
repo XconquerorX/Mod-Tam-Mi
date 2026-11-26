@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>กระดานพูดคุย & สอบถาม — Thai Mod Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Prompt:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="forum">
+  <div class="container">
+    <header class="site-header">
+      <div class="header-left">
+        <a href="index.html" class="btn btn-soft">← กลับหน้าหลักมอด</a>
+      </div>
+      <div class="header-center">
+        <h1 class="brand-title">กระดานพูดคุย & สอบถาม</h1>
+        <p class="brand-sub">แยกหน้าพูดคุยสอบถาม วิธีลงมอด และแลกเปลี่ยนข้อมูลสมาชิก</p>
+      </div>
+      <div class="header-right">
+        <div id="forumUserBadge" class="profile-box">กำลังโหลดข้อมูลผู้ใช้...</div>
+      </div>
+    </header>
+
+    <section class="forum-section forum-page-box">
+      <div class="forum-header">
+        <div>
+          <h2>รายการกระทู้ทั้งหมด</h2>
+          <p class="muted small-text">ตั้งกระทู้ใหม่หรือพิมพ์ตอบกลับได้ทันที</p>
+        </div>
+        <button type="button" id="toggleNewThreadBtn" class="btn btn-primary">+ ตั้งกระทู้ใหม่</button>
+      </div>
+
+      <form id="newThreadForm" class="card-box hidden">
+        <div class="form-group">
+          <label for="threadTitleInput">หัวข้อกระทู้</label>
+          <input type="text" id="threadTitleInput" placeholder="เช่น ลงมอดแปลไทยแล้วเด้ง ต้องแก้ยังไงครับ" required />
+        </div>
+        <div class="form-group">
+          <label for="threadBodyInput">รายละเอียด</label>
+          <textarea id="threadBodyInput" rows="4" placeholder="พิมพ์รายละเอียดคำถามหรือเรื่องที่อยากพูดคุย..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">โพสต์กระทู้</button>
+      </form>
+
+      <div id="threadList" class="thread-list"></div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
